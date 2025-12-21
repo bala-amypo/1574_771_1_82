@@ -1,8 +1,3 @@
-package com.example.demo.model;
-
-import jakarta.persistence.*;
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "employee_profiles")
 public class EmployeeProfile {
@@ -11,25 +6,20 @@ public class EmployeeProfile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true)
     private String employeeId;
-
     private String fullName;
-
-    @Column(unique = true)
     private String email;
-
     private String teamName;
     private String role;
     private Boolean active;
 
-    private LocalDateTime createdAt;
+    public Long getId() { return id; }
+    public String getEmployeeId() { return employeeId; }
+    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
 
-    @PrePersist
-    void onCreate() {
-        createdAt = LocalDateTime.now();
-        active = true;
-    }
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 
-    public EmployeeProfile() {}
+    public String getEmail() { return email; }
+    public String getRole() { return role; }
 }
