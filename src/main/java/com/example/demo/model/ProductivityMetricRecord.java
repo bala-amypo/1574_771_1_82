@@ -24,6 +24,10 @@ public class ProductivityMetricRecord {
         return id;
     }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getEmployeeId() {
         return employeeId;
     }

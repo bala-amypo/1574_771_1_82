@@ -23,6 +23,26 @@ public class AnomalyFlagRecord {
         return employeeId;
     }
 
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
+
+    public Long getMetricId() {
+        return metricId;
+    }
+
+    public void setMetricId(Long metricId) {
+        this.metricId = metricId;
+    }
+
+    public String getRuleCode() {
+        return ruleCode;
+    }
+
+    public void setRuleCode(String ruleCode) {
+        this.ruleCode = ruleCode;
+    }
+
     public void setSeverity(String severity) {
         this.severity = severity;
     }
