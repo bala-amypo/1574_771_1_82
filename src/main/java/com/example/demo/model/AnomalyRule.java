@@ -13,10 +13,19 @@ public class AnomalyRule {
     @Column(unique = true)
     private String ruleCode;
 
-    private String description;
-    private String thresholdType;
     private Double thresholdValue;
-    private Boolean active;
 
     public AnomalyRule() {}
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getRuleCode() {
+        return ruleCode;
+    }
+
+    public Double getThresholdValue() {
+        return thresholdValue;
+    }
 }

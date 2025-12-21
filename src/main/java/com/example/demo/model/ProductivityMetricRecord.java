@@ -2,13 +2,9 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "productivity_metric_records",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"employee_id","date"})
-)
+@Table(name = "productivity_metric_records")
 public class ProductivityMetricRecord {
 
     @Id
@@ -21,13 +17,34 @@ public class ProductivityMetricRecord {
     private Integer tasksCompleted;
     private Integer meetingsAttended;
     private Double productivityScore;
-    private String rawDataJson;
-    private LocalDateTime submittedAt;
-
-    @PrePersist
-    void onSubmit() {
-        submittedAt = LocalDateTime.now();
-    }
 
     public ProductivityMetricRecord() {}
+
+    public Long getId() {
+        return id;
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public Double getHoursLogged() {
+        return hoursLogged;
+    }
+
+    public Integer getTasksCompleted() {
+        return tasksCompleted;
+    }
+
+    public Integer getMeetingsAttended() {
+        return meetingsAttended;
+    }
+
+    public void setProductivityScore(Double productivityScore) {
+        this.productivityScore = productivityScore;
+    }
 }

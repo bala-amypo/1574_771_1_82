@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "anomaly_flag_records")
@@ -17,13 +16,22 @@ public class AnomalyFlagRecord {
     private String severity;
     private String details;
     private Boolean resolved;
-    private LocalDateTime flaggedAt;
-
-    @PrePersist
-    void onFlag() {
-        flaggedAt = LocalDateTime.now();
-        resolved = false;
-    }
 
     public AnomalyFlagRecord() {}
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public void setResolved(Boolean resolved) {
+        this.resolved = resolved;
+    }
 }

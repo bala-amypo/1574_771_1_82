@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -20,12 +19,25 @@ public class UserAccount {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> role;
 
-    private LocalDateTime createdAt;
+    public UserAccount() {}
 
-    @PrePersist
-    void onCreate() {
-        createdAt = LocalDateTime.now();
+    public Long getId() {
+        return id;
     }
 
-    public UserAccount() {}
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public Set<String> getRole() {
+        return role;
+    }
 }
