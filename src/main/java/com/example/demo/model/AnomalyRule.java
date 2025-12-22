@@ -12,7 +12,7 @@ public class AnomalyRule {
 
     @Column(unique = true)
     private String ruleCode;
-
+    private boolean active;
     private Double thresholdValue;
 
     public AnomalyRule() {}
