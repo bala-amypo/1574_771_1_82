@@ -12,10 +12,24 @@ public class AnomalyRule {
 
     @Column(unique = true)
     private String ruleCode;
+
     private boolean active;
+
     private Double thresholdValue;
 
-    public AnomalyRule() {}
+    // ===== DEFAULT CONSTRUCTOR (JPA requires this) =====
+    public AnomalyRule() {
+    }
+
+    // ===== PARAMETERIZED CONSTRUCTOR =====
+    public AnomalyRule(Long id, String ruleCode, boolean active, Double thresholdValue) {
+        this.id = id;
+        this.ruleCode = ruleCode;
+        this.active = active;
+        this.thresholdValue = thresholdValue;
+    }
+
+    // ===== GETTERS & SETTERS =====
 
     public Long getId() {
         return id;
@@ -29,7 +43,23 @@ public class AnomalyRule {
         return ruleCode;
     }
 
+    public void setRuleCode(String ruleCode) {
+        this.ruleCode = ruleCode;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public Double getThresholdValue() {
         return thresholdValue;
+    }
+
+    public void setThresholdValue(Double thresholdValue) {
+        this.thresholdValue = thresholdValue;
     }
 }
