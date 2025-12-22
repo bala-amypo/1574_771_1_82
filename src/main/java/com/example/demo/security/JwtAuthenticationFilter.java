@@ -9,6 +9,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
+
+@Component
+
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     protected void doFilterInternal(
