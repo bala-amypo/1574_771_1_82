@@ -5,6 +5,8 @@ import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.UserAccount;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserAccountService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,19 +27,30 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public UserAccount register(@RequestBody UserAccount user) {
+    public ResponseEntity<UserAccount> register(@RequestBody UserAccount user) {
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
-        return userAccountService.registerUser(user);
+        UserAccount saved = userAccountService.registerUser(user);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+
         UserAccount user = userAccountService.findByEmail(request.getEmail());
+
+        if (user == null || !passwordEncoder.matches(
+                request.getPassword(), user.getPasswordHash())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
         String token = jwtTokenProvider.generateToken(
                 user.getId(),
                 user.getEmail(),
                 user.getRoles().iterator().next()
         );
-        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRoles());
+
+        return ResponseEntity.ok(
+                new AuthResponse(token, user.getId(), user.getEmail(), user.getRoles())
+        );
     }
 }
