@@ -3,8 +3,10 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "anomaly_rules",
-       uniqueConstraints = @UniqueConstraint(columnNames = "ruleCode"))
+@Table(
+    name = "anomaly_rules",
+    uniqueConstraints = @UniqueConstraint(columnNames = "ruleCode")
+)
 public class AnomalyRule {
 
     @Id
@@ -19,20 +21,51 @@ public class AnomalyRule {
 
     public AnomalyRule() {}
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getRuleCode() { return ruleCode; }
-    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
+    public String getRuleCode() {
+        return ruleCode;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setRuleCode(String ruleCode) {
+        this.ruleCode = ruleCode;
+    }
 
-    public String getThresholdType() { return thresholdType; }
-    public void setThresholdType(String thresholdType) { this.thresholdType = thresholdType; }
+    public String getDescription() {
+        return description;
+    }
 
-    public Double getThresholdValue() { return thresholdValue; }
-    public void setThresholdValue(Double thresholdValue) { this.thresholdValue = thresholdValue; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public Boolean getActive() { return active; }
-    public void setActive(Boolean active) { this.active = active; }
+    public String getThresholdType() {
+        return thresholdType;
+    }
+
+    public void setThresholdType(String thresholdType) {
+        this.thresholdType = thresholdType;
+    }
+
+    public Double getThresholdValue() {
+        return thresholdValue;
+    }
+
+    public void setThresholdValue(Double thresholdValue) {
+        this.thresholdValue = thresholdValue;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public boolean isActive() {
+        return Boolean.TRUE.equals(active);
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 }
