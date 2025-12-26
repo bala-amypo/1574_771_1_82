@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.model.ProductivityMetricRecord;
 import com.example.demo.service.ProductivityMetricService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,29 +19,47 @@ public class ProductivityMetricController {
     }
 
     @PostMapping
-    public ProductivityMetricRecord record(@RequestBody ProductivityMetricRecord record) {
-        return metricService.recordMetric(record);
+    public ResponseEntity<ProductivityMetricRecord> record(
+            @RequestBody ProductivityMetricRecord record) {
+
+        ProductivityMetricRecord saved = metricService.recordMetric(record);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ProductivityMetricRecord update(@PathVariable Long id,
-                                           @RequestBody ProductivityMetricRecord record) {
-        return metricService.updateMetric(id, record);
+    public ResponseEntity<ProductivityMetricRecord> update(
+            @PathVariable Long id,
+            @RequestBody ProductivityMetricRecord record) {
+
+        return ResponseEntity.ok(
+                metricService.updateMetric(id, record)
+        );
     }
 
     @GetMapping("/employee/{employeeId}")
-    public List<ProductivityMetricRecord> byEmployee(@PathVariable Long employeeId) {
-        return metricService.getMetricsByEmployee(employeeId);
+    public ResponseEntity<List<ProductivityMetricRecord>> byEmployee(
+            @PathVariable Long employeeId) {
+
+        return ResponseEntity.ok(
+                metricService.getMetricsByEmployee(employeeId)
+        );
     }
 
     @GetMapping("/{id}")
-    public ProductivityMetricRecord getById(@PathVariable Long id) {
+    public ResponseEntity<ProductivityMetricRecord> getById(
+            @PathVariable Long id) {
+
         return metricService.getMetricById(id)
-                .orElseThrow(() -> new RuntimeException("Metric not found"));
+                .map(ResponseEntity::ok)
+                .orElseGet(() ->
+                        ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+                );
     }
 
     @GetMapping
-    public List<ProductivityMetricRecord> getAll() {
-        return metricService.getAllMetrics();
+    public ResponseEntity<List<ProductivityMetricRecord>> getAll() {
+        return ResponseEntity.ok(
+                metricService.getAllMetrics()
+        );
     }
 }

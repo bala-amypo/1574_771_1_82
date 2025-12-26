@@ -1,9 +1,10 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.CredentialRequestDto;
 import com.example.demo.dto.CredentialStatusDto;
 import com.example.demo.model.Credential;
 import com.example.demo.service.CredentialVerificationService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,17 +20,26 @@ public class CredentialVerificationController {
     }
 
     @PostMapping
-    public Credential register(@RequestBody Credential credential) {
-        return credentialService.registerCredential(credential);
+    public ResponseEntity<Credential> register(@RequestBody Credential credential) {
+        Credential saved = credentialService.registerCredential(credential);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @PostMapping("/{credentialId}/verify")
-    public CredentialStatusDto verify(@PathVariable String credentialId) {
-        return credentialService.verifyCredential(credentialId);
+    public ResponseEntity<CredentialStatusDto> verify(
+            @PathVariable String credentialId) {
+
+        return ResponseEntity.ok(
+                credentialService.verifyCredential(credentialId)
+        );
     }
 
     @GetMapping("/employee/{employeeId}")
-    public List<Credential> byEmployee(@PathVariable Long employeeId) {
-        return credentialService.getCredentialsForEmployee(employeeId);
+    public ResponseEntity<List<Credential>> byEmployee(
+            @PathVariable Long employeeId) {
+
+        return ResponseEntity.ok(
+                credentialService.getCredentialsForEmployee(employeeId)
+        );
     }
 }

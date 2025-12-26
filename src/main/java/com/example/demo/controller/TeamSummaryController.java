@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.model.TeamSummaryRecord;
 import com.example.demo.service.TeamSummaryService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -18,18 +20,29 @@ public class TeamSummaryController {
     }
 
     @PostMapping("/generate")
-    public TeamSummaryRecord generate(@RequestParam String teamName,
-                                      @RequestParam LocalDate summaryDate) {
-        return teamSummaryService.generateSummary(teamName, summaryDate);
+    public ResponseEntity<TeamSummaryRecord> generate(
+            @RequestParam String teamName,
+            @RequestParam LocalDate summaryDate) {
+
+        TeamSummaryRecord summary =
+                teamSummaryService.generateSummary(teamName, summaryDate);
+
+        return new ResponseEntity<>(summary, HttpStatus.CREATED);
     }
 
     @GetMapping("/team/{teamName}")
-    public List<TeamSummaryRecord> byTeam(@PathVariable String teamName) {
-        return teamSummaryService.getSummariesByTeam(teamName);
+    public ResponseEntity<List<TeamSummaryRecord>> byTeam(
+            @PathVariable String teamName) {
+
+        return ResponseEntity.ok(
+                teamSummaryService.getSummariesByTeam(teamName)
+        );
     }
 
     @GetMapping
-    public List<TeamSummaryRecord> getAll() {
-        return teamSummaryService.getAllSummaries();
+    public ResponseEntity<List<TeamSummaryRecord>> getAll() {
+        return ResponseEntity.ok(
+                teamSummaryService.getAllSummaries()
+        );
     }
 }

@@ -1,8 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.EmployeeProfileDto;
 import com.example.demo.model.EmployeeProfile;
 import com.example.demo.service.EmployeeProfileService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,29 +19,45 @@ public class EmployeeProfileController {
     }
 
     @PostMapping
-    public EmployeeProfile create(@RequestBody EmployeeProfile employee) {
-        return employeeProfileService.createEmployee(employee);
+    public ResponseEntity<EmployeeProfile> create(
+            @RequestBody EmployeeProfile employee) {
+
+        EmployeeProfile saved = employeeProfileService.createEmployee(employee);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public EmployeeProfile getById(@PathVariable Long id) {
-        return employeeProfileService.getEmployeeById(id);
+    public ResponseEntity<EmployeeProfile> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                employeeProfileService.getEmployeeById(id)
+        );
     }
 
     @GetMapping
-    public List<EmployeeProfile> getAll() {
-        return employeeProfileService.getAllEmployees();
+    public ResponseEntity<List<EmployeeProfile>> getAll() {
+        return ResponseEntity.ok(
+                employeeProfileService.getAllEmployees()
+        );
     }
 
     @PutMapping("/{id}/status")
-    public EmployeeProfile updateStatus(@PathVariable Long id,
-                                        @RequestParam boolean active) {
-        return employeeProfileService.updateEmployeeStatus(id, active);
+    public ResponseEntity<EmployeeProfile> updateStatus(
+            @PathVariable Long id,
+            @RequestParam boolean active) {
+
+        return ResponseEntity.ok(
+                employeeProfileService.updateEmployeeStatus(id, active)
+        );
     }
 
     @GetMapping("/lookup/{employeeId}")
-    public EmployeeProfile lookup(@PathVariable String employeeId) {
+    public ResponseEntity<EmployeeProfile> lookup(
+            @PathVariable String employeeId) {
+
         return employeeProfileService.findByEmployeeId(employeeId)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+                .map(ResponseEntity::ok)
+                .orElseGet(() ->
+                        ResponseEntity.status(HttpStatus.NOT_FOUND).build()
+                );
     }
 }
