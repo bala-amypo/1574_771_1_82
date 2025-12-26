@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.EmployeeProfile;
 import com.example.demo.model.ProductivityMetricRecord;
 import com.example.demo.service.ProductivityMetricService;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/metrics")
@@ -20,10 +22,22 @@ public class ProductivityMetricController {
 
     @PostMapping
     public ResponseEntity<ProductivityMetricRecord> record(
-            @RequestBody ProductivityMetricRecord record) {
+            @RequestBody Map<String, Object> payload) {
 
-        ProductivityMetricRecord saved = metricService.recordMetric(record);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+        ProductivityMetricRecord record = new ProductivityMetricRecord();
+
+        EmployeeProfile employee = new EmployeeProfile();
+        employee.setId(Long.valueOf(payload.get("employeeId").toString()));
+        record.setEmployee(employee);
+
+        record.setDate(java.time.LocalDate.parse(payload.get("date").toString()));
+        record.setHoursLogged(Double.valueOf(payload.get("hoursLogged").toString()));
+        record.setTasksCompleted(Integer.valueOf(payload.get("tasksCompleted").toString()));
+        record.setMeetingsAttended(Integer.valueOf(payload.get("meetingsAttended").toString()));
+        record.setRawDataJson(payload.get("rawDataJson").toString());
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(metricService.recordMetric(record));
     }
 
     @PutMapping("/{id}")
@@ -31,9 +45,7 @@ public class ProductivityMetricController {
             @PathVariable Long id,
             @RequestBody ProductivityMetricRecord record) {
 
-        return ResponseEntity.ok(
-                metricService.updateMetric(id, record)
-        );
+        return ResponseEntity.ok(metricService.updateMetric(id, record));
     }
 
     @GetMapping("/employee/{employeeId}")
@@ -51,15 +63,11 @@ public class ProductivityMetricController {
 
         return metricService.getMetricById(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() ->
-                        ResponseEntity.status(HttpStatus.NOT_FOUND).build()
-                );
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
     public ResponseEntity<List<ProductivityMetricRecord>> getAll() {
-        return ResponseEntity.ok(
-                metricService.getAllMetrics()
-        );
+        return ResponseEntity.ok(metricService.getAllMetrics());
     }
 }
