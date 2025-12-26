@@ -1,14 +1,41 @@
-package com.example.demo.repository;
+package com.example.demo.model;
 
-import com.example.demo.model.AnomalyRule;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import javax.persistence.*;
 
-import java.util.List;
+@Entity
+@Table(name = "anomaly_rules", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"ruleCode"})
+})
+public class AnomalyRule {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-@Repository
-public interface AnomalyRuleRepository
-        extends JpaRepository<AnomalyRule, Long> {
+    private String ruleCode;
+    @Lob
+    private String description;
+    private String thresholdType;
+    private Double thresholdValue;
+    private Boolean active = true;
 
-    List<AnomalyRule> findByActiveTrue();
+    public AnomalyRule() {}
+
+    public AnomalyRule(String ruleCode, String description) {
+        this.ruleCode = ruleCode;
+        this.description = description;
+    }
+
+    // getters/setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getRuleCode() { return ruleCode; }
+    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getThresholdType() { return thresholdType; }
+    public void setThresholdType(String thresholdType) { this.thresholdType = thresholdType; }
+    public Double getThresholdValue() { return thresholdValue; }
+    public void setThresholdValue(Double thresholdValue) { this.thresholdValue = thresholdValue; }
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 }
