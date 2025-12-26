@@ -4,12 +4,10 @@ import com.example.demo.model.Credential;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface CredentialRepository
-        extends JpaRepository<Credential, Long> {
+public interface CredentialRepository extends JpaRepository<Credential, Long> {
 
-    List<Credential> findByEmployeeId(Long employeeId);
+    List<Credential> findByEmployee_Id(Long employeeId);
 
-    Optional<Credential> findByCredentialId(String credentialId);
+    Credential findByCredentialId(String credentialId);
 }
