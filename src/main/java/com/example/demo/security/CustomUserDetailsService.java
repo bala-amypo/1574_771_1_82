@@ -2,26 +2,35 @@ package com.example.demo.security;
 
 import com.example.demo.model.UserAccount;
 import com.example.demo.repository.UserAccountRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserAccountRepository repo;
+    private final UserAccountRepository userAccountRepository;
 
-    public CustomUserDetailsService(UserAccountRepository repo) {
-        this.repo = repo;
+    public CustomUserDetailsService(UserAccountRepository userAccountRepository) {
+        this.userAccountRepository = userAccountRepository;
     }
 
-    public UserDetails loadUserByUsername(String email) {
-        UserAccount u = repo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    @Override
+    public UserDetails loadUserByUsername(String email)
+            throws UsernameNotFoundException {
 
-        return User.builder()
-                .username(u.getEmail())
-                .password(u.getPasswordHash())
-                .authorities(u.getRole().toArray(new String[0]))
-                .build();
+        UserAccount user = userAccountRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found"));
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPasswordHash(),
+                user.getRoles().stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toSet())
+        );
     }
 }

@@ -1,14 +1,19 @@
 package com.example.demo.service;
 
-import com.example.demo.model.ProductivityMetricRecord;
+import com.example.demo.model.EmployeeProfile;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface ProductivityMetricService {
-    ProductivityMetricRecord recordMetric(ProductivityMetricRecord metric);
-    ProductivityMetricRecord updateMetric(Long id, ProductivityMetricRecord updated);
-    List<ProductivityMetricRecord> getMetricsByEmployee(Long employeeId);
-    Optional<ProductivityMetricRecord> getMetricById(Long id);
-    List<ProductivityMetricRecord> getAllMetrics();
+public interface EmployeeProfileService {
+
+    EmployeeProfile createEmployee(EmployeeProfile employee);
+
+    EmployeeProfile getEmployeeById(Long id);
+
+    List<EmployeeProfile> getAllEmployees();
+
+    Optional<EmployeeProfile> findByEmployeeId(String employeeId);
+
+    EmployeeProfile updateEmployeeStatus(Long id, boolean active);
 }
