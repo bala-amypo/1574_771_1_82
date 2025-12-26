@@ -1,4 +1,4 @@
-```java
+
 package com.example.demo.dto;
 
 import java.time.LocalDateTime;
@@ -27,4 +27,3 @@ public class CredentialRequestDto {
     public String getMetadataJson() { return metadataJson; }
     public void setMetadataJson(String metadataJson) { this.metadataJson = metadataJson; }
 }
-```

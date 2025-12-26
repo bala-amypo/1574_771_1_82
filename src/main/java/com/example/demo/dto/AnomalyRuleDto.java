@@ -1,4 +1,4 @@
-```java
+
 package com.example.demo.dto;
 
 public class AnomalyRuleDto {
@@ -25,4 +25,3 @@ public class AnomalyRuleDto {
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
 }
-```

@@ -1,4 +1,4 @@
-```java
+
 package com.example.demo.dto;
 
 import java.time.LocalDate;
@@ -37,4 +37,3 @@ public class ProductivityMetricDto {
     public LocalDateTime getSubmittedAt() { return submittedAt; }
     public void setSubmittedAt(LocalDateTime submittedAt) { this.submittedAt = submittedAt; }
 }
-```

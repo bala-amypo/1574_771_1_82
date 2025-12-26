@@ -1,4 +1,4 @@
-```java
+
 package com.example.demo.dto;
 
 import java.time.LocalDateTime;
@@ -33,4 +33,3 @@ public class AnomalyFlagDto {
     public Boolean getResolved() { return resolved; }
     public void setResolved(Boolean resolved) { this.resolved = resolved; }
 }
-```

@@ -1,4 +1,4 @@
-```java
+
 package com.example.demo.dto;
 
 import java.time.LocalDate;
@@ -34,4 +34,3 @@ public class TeamSummaryDto {
     public LocalDateTime getGeneratedAt() { return generatedAt; }
     public void setGeneratedAt(LocalDateTime generatedAt) { this.generatedAt = generatedAt; }
 }
-```

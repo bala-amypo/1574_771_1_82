@@ -1,4 +1,4 @@
-```java
+
 package com.example.demo.dto;
 
 import java.time.LocalDateTime;
@@ -21,4 +21,3 @@ public class CredentialStatusDto {
     public String getDetails() { return details; }
     public void setDetails(String details) { this.details = details; }
 }
-```
