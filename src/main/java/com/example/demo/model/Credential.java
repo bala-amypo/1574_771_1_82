@@ -32,6 +32,15 @@ public class Credential {
     public String getCredentialId() { return credentialId; }
     public void setCredentialId(String credentialId) { this.credentialId = credentialId; }
 
+    public EmployeeProfile getEmployee() {
+    return employee;
+}
+
+public void setEmployee(EmployeeProfile employee) {
+    this.employee = employee;
+}
+
+
     public String getIssuer() { return issuer; }
     public void setIssuer(String issuer) { this.issuer = issuer; }
 

@@ -44,5 +44,14 @@ public class AnomalyFlagRecord {
     public Boolean getResolved() { return resolved; }
     public void setResolved(Boolean resolved) { this.resolved = resolved; }
 
+    public void setEmployee(EmployeeProfile employee) {
+    this.employee = employee;
+}
+
+public void setMetric(ProductivityMetricRecord metric) {
+    this.metric = metric;
+}
+
+
     public LocalDateTime getFlaggedAt() { return flaggedAt; }
 }
