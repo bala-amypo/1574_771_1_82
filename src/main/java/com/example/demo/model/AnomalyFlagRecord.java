@@ -1,35 +1,14 @@
-package com.example.demo.model;
+package com.example.demo.repository;
 
-import jakarta.persistence.*;
+import com.example.demo.model.AnomalyFlagRecord;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Entity
-@Table(name = "anomaly_flags")
-public class AnomalyFlagRecord {
+import java.util.List;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Repository
+public interface AnomalyFlagRecordRepository
+        extends JpaRepository<AnomalyFlagRecord, Long> {
 
-    private String ruleCode;
-    private String severity;
-
-    @Column(columnDefinition = "TEXT")
-    private String details;
-
-    private Boolean resolved = false;
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getRuleCode() { return ruleCode; }
-    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
-
-    public String getSeverity() { return severity; }
-    public void setSeverity(String severity) { this.severity = severity; }
-
-    public String getDetails() { return details; }
-    public void setDetails(String details) { this.details = details; }
-
-    public Boolean getResolved() { return resolved; }
-    public void setResolved(Boolean resolved) { this.resolved = resolved; }
+    List<AnomalyFlagRecord> findByMetricId(Long metricId);
 }

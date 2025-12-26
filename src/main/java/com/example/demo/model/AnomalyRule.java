@@ -1,26 +1,14 @@
-package com.example.demo.model;
+package com.example.demo.repository;
 
-import jakarta.persistence.*;
+import com.example.demo.model.AnomalyRule;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-@Entity
-@Table(name = "anomaly_rules")
-public class AnomalyRule {
+import java.util.List;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Repository
+public interface AnomalyRuleRepository
+        extends JpaRepository<AnomalyRule, Long> {
 
-    @Column(unique = true)
-    private String ruleCode;
-
-    private Double thresholdValue;
-
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getRuleCode() { return ruleCode; }
-    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
-
-    public Double getThresholdValue() { return thresholdValue; }
-    public void setThresholdValue(Double thresholdValue) { this.thresholdValue = thresholdValue; }
+    List<AnomalyRule> findByActiveTrue();
 }
