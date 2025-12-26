@@ -1,6 +1,8 @@
 package com.example.demo.config;
 
 import com.example.demo.security.JwtAuthenticationFilter;
+import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,27 +17,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
-        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter(
+            JwtTokenProvider jwtTokenProvider,
+            CustomUserDetailsService userDetailsService) {
+        return new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,
+                                           JwtAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception {
+
         http
             .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                         "/auth/**",
                         "/swagger-ui/**",
                         "/v3/api-docs/**"
                 ).permitAll()
-                .requestMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter,
+                    UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -47,7 +54,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager(
-            AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+            AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }
