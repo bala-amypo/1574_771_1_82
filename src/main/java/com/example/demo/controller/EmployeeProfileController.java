@@ -1,42 +1,46 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.EmployeeProfileDto;
 import com.example.demo.model.EmployeeProfile;
 import com.example.demo.service.EmployeeProfileService;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeProfileController {
 
-    private final EmployeeProfileService service;
+    private final EmployeeProfileService employeeProfileService;
 
-    public EmployeeProfileController(EmployeeProfileService service) {
-        this.service = service;
+    public EmployeeProfileController(EmployeeProfileService employeeProfileService) {
+        this.employeeProfileService = employeeProfileService;
     }
 
     @PostMapping
-    public EmployeeProfile create(@RequestBody EmployeeProfile e) {
-        return service.createEmployee(e);
+    public EmployeeProfile create(@RequestBody EmployeeProfile employee) {
+        return employeeProfileService.createEmployee(employee);
     }
 
     @GetMapping("/{id}")
-    public EmployeeProfile get(@PathVariable Long id) {
-        return service.getEmployeeById(id);
+    public EmployeeProfile getById(@PathVariable Long id) {
+        return employeeProfileService.getEmployeeById(id);
     }
 
     @GetMapping
     public List<EmployeeProfile> getAll() {
-        return service.getAllEmployees();
+        return employeeProfileService.getAllEmployees();
     }
 
     @PutMapping("/{id}/status")
-    public EmployeeProfile updateStatus(@PathVariable Long id, @RequestParam boolean active) {
-        return service.updateEmployeeStatus(id, active);
+    public EmployeeProfile updateStatus(@PathVariable Long id,
+                                        @RequestParam boolean active) {
+        return employeeProfileService.updateEmployeeStatus(id, active);
     }
 
     @GetMapping("/lookup/{employeeId}")
     public EmployeeProfile lookup(@PathVariable String employeeId) {
-        return service.findByEmployeeId(employeeId).orElseThrow();
+        return employeeProfileService.findByEmployeeId(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
     }
 }

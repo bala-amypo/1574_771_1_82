@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.CredentialRequestDto;
 import com.example.demo.dto.CredentialStatusDto;
 import com.example.demo.model.Credential;
 import com.example.demo.service.CredentialVerificationService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,29 +12,24 @@ import java.util.List;
 @RequestMapping("/api/credentials")
 public class CredentialVerificationController {
 
-    private final CredentialVerificationService service;
+    private final CredentialVerificationService credentialService;
 
-    public CredentialVerificationController(CredentialVerificationService service) {
-        this.service = service;
+    public CredentialVerificationController(CredentialVerificationService credentialService) {
+        this.credentialService = credentialService;
     }
 
     @PostMapping
-    public ResponseEntity<Credential> register(@RequestBody Credential req) {
-        return ResponseEntity.ok(service.registerCredential(req));
+    public Credential register(@RequestBody Credential credential) {
+        return credentialService.registerCredential(credential);
     }
 
     @PostMapping("/{credentialId}/verify")
-    public ResponseEntity<CredentialStatusDto> verify(@PathVariable String credentialId) {
-        return ResponseEntity.ok(service.verifyCredential(credentialId));
+    public CredentialStatusDto verify(@PathVariable String credentialId) {
+        return credentialService.verifyCredential(credentialId);
     }
 
     @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<Credential>> byEmployee(@PathVariable Long employeeId) {
-        return ResponseEntity.ok(service.getCredentialsForEmployee(employeeId));
-    }
-
-    @GetMapping("/{credentialId}")
-    public ResponseEntity<Credential> get(@PathVariable String credentialId) {
-        return ResponseEntity.ok(service.getCredentialByCredentialId(credentialId));
+    public List<Credential> byEmployee(@PathVariable Long employeeId) {
+        return credentialService.getCredentialsForEmployee(employeeId);
     }
 }

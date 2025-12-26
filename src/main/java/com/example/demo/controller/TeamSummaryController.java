@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.model.TeamSummaryRecord;
 import com.example.demo.service.TeamSummaryService;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -10,24 +11,25 @@ import java.util.List;
 @RequestMapping("/api/team-summaries")
 public class TeamSummaryController {
 
-    private final TeamSummaryService service;
+    private final TeamSummaryService teamSummaryService;
 
-    public TeamSummaryController(TeamSummaryService service) {
-        this.service = service;
+    public TeamSummaryController(TeamSummaryService teamSummaryService) {
+        this.teamSummaryService = teamSummaryService;
     }
 
     @PostMapping("/generate")
-    public TeamSummaryRecord generate(@RequestParam String teamName, @RequestParam String date) {
-        return service.generateSummary(teamName, LocalDate.parse(date));
+    public TeamSummaryRecord generate(@RequestParam String teamName,
+                                      @RequestParam LocalDate summaryDate) {
+        return teamSummaryService.generateSummary(teamName, summaryDate);
     }
 
     @GetMapping("/team/{teamName}")
     public List<TeamSummaryRecord> byTeam(@PathVariable String teamName) {
-        return service.getSummariesByTeam(teamName);
+        return teamSummaryService.getSummariesByTeam(teamName);
     }
 
     @GetMapping
-    public List<TeamSummaryRecord> all() {
-        return service.getAllSummaries();
+    public List<TeamSummaryRecord> getAll() {
+        return teamSummaryService.getAllSummaries();
     }
 }
