@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/team-summaries")
@@ -21,13 +22,15 @@ public class TeamSummaryController {
 
     @PostMapping("/generate")
     public ResponseEntity<TeamSummaryRecord> generate(
-            @RequestParam String teamName,
-            @RequestParam LocalDate summaryDate) {
+            @RequestBody Map<String, String> payload) {
+
+        String teamName = payload.get("teamName");
+        LocalDate summaryDate = LocalDate.parse(payload.get("summaryDate"));
 
         TeamSummaryRecord summary =
                 teamSummaryService.generateSummary(teamName, summaryDate);
 
-        return new ResponseEntity<>(summary, HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(summary);
     }
 
     @GetMapping("/team/{teamName}")

@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -27,20 +30,31 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserAccount> register(@RequestBody UserAccount user) {
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
-        UserAccount saved = userAccountService.registerUser(user);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    public ResponseEntity<UserAccount> register(
+            @RequestBody Map<String, String> payload) {
+
+        UserAccount user = new UserAccount();
+        user.setUsername(payload.get("username"));
+        user.setEmail(payload.get("email"));
+        user.setPasswordHash(
+                passwordEncoder.encode(payload.get("password"))
+        );
+        user.setRoles(Collections.singleton("ROLE_USER"));
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userAccountService.registerUser(user));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 
         UserAccount user = userAccountService.findByEmail(request.getEmail());
 
         if (user == null || !passwordEncoder.matches(
                 request.getPassword(), user.getPasswordHash())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password"));
         }
 
         String token = jwtTokenProvider.generateToken(
@@ -50,7 +64,12 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(
-                new AuthResponse(token, user.getId(), user.getEmail(), user.getRoles())
+                new AuthResponse(
+                        token,
+                        user.getId(),
+                        user.getEmail(),
+                        user.getRoles()
+                )
         );
     }
 }
