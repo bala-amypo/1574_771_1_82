@@ -11,39 +11,38 @@ import java.util.List;
 @Service
 public class AnomalyFlagServiceImpl implements AnomalyFlagService {
 
-    private final AnomalyFlagRecordRepository repo;
+    private final AnomalyFlagRecordRepository repository;
 
-    public AnomalyFlagServiceImpl(AnomalyFlagRecordRepository repo) {
-        this.repo = repo;
+    public AnomalyFlagServiceImpl(AnomalyFlagRecordRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public AnomalyFlagRecord flagAnomaly(AnomalyFlagRecord flag) {
         flag.setResolved(false);
-        flag.setFlaggedAt(java.time.LocalDateTime.now());
-        return repo.save(flag);
+        return repository.save(flag);
     }
 
     @Override
     public AnomalyFlagRecord resolveFlag(Long id) {
-        return repo.findById(id).map(f -> {
-            f.setResolved(true);
-            return repo.save(f);
-        }).orElseThrow(() -> new ResourceNotFoundException("Anomaly flag not found"));
+        AnomalyFlagRecord flag = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Anomaly flag not found"));
+        flag.setResolved(true);
+        return repository.save(flag);
     }
 
     @Override
     public List<AnomalyFlagRecord> getFlagsByEmployee(Long employeeId) {
-        return repo.findByEmployeeId(employeeId);
+        return repository.findAll();
     }
 
     @Override
     public List<AnomalyFlagRecord> getFlagsByMetric(Long metricId) {
-        return repo.findByMetricId(metricId);
+        return repository.findByMetricId(metricId);
     }
 
     @Override
     public List<AnomalyFlagRecord> getAllFlags() {
-        return repo.findAll();
+        return repository.findAll();
     }
 }

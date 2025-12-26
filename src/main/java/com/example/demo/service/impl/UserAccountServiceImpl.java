@@ -10,31 +10,30 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
 
-    private final UserAccountRepository repo;
-    private final PasswordEncoder encoder;
+    private final UserAccountRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserAccountServiceImpl(UserAccountRepository repo, PasswordEncoder encoder) {
-        this.repo = repo;
-        this.encoder = encoder;
+    public UserAccountServiceImpl(UserAccountRepository repository,
+                                  PasswordEncoder passwordEncoder) {
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserAccount registerUser(UserAccount user) {
-        repo.findByEmail(user.getEmail()).ifPresent(u -> { throw new IllegalStateException("User exists"); });
-        user.setPasswordHash(encoder.encode(user.getPasswordHash()));
-        if (user.getRoles() == null || user.getRoles().isEmpty()) {
-            user.setRoles(java.util.Set.of("ADMIN"));
-        }
-        return repo.save(user);
+        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        return repository.save(user);
     }
 
     @Override
     public UserAccount findByEmail(String email) {
-        return repo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return repository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
     @Override
     public UserAccount findById(Long id) {
-        return repo.findById(id).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }

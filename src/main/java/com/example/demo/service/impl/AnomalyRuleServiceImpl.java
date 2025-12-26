@@ -12,42 +12,44 @@ import java.util.Optional;
 @Service
 public class AnomalyRuleServiceImpl implements AnomalyRuleService {
 
-    private final AnomalyRuleRepository repo;
+    private final AnomalyRuleRepository repository;
 
-    public AnomalyRuleServiceImpl(AnomalyRuleRepository repo) {
-        this.repo = repo;
+    public AnomalyRuleServiceImpl(AnomalyRuleRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public AnomalyRule createRule(AnomalyRule rule) {
-        repo.findByRuleCode(rule.getRuleCode()).ifPresent(r -> { throw new IllegalStateException("Rule exists"); });
-        return repo.save(rule);
+        return repository.save(rule);
     }
 
     @Override
     public AnomalyRule updateRule(Long id, AnomalyRule updatedRule) {
-        return repo.findById(id).map(r -> {
-            r.setDescription(updatedRule.getDescription());
-            r.setThresholdType(updatedRule.getThresholdType());
-            r.setThresholdValue(updatedRule.getThresholdValue());
-            r.setActive(updatedRule.getActive());
-            r.setRuleCode(updatedRule.getRuleCode());
-            return repo.save(r);
-        }).orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
+        AnomalyRule rule = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Rule not found"));
+
+        rule.setDescription(updatedRule.getDescription());
+        rule.setThresholdType(updatedRule.getThresholdType());
+        rule.setThresholdValue(updatedRule.getThresholdValue());
+        rule.setActive(updatedRule.getActive());
+
+        return repository.save(rule);
     }
 
     @Override
     public List<AnomalyRule> getActiveRules() {
-        return repo.findByActiveTrue();
+        return repository.findByActiveTrue();
     }
 
     @Override
     public Optional<AnomalyRule> getRuleByCode(String ruleCode) {
-        return repo.findByRuleCode(ruleCode);
+        return repository.findAll().stream()
+                .filter(r -> r.getRuleCode().equals(ruleCode))
+                .findFirst();
     }
 
     @Override
     public List<AnomalyRule> getAllRules() {
-        return repo.findAll();
+        return repository.findAll();
     }
 }

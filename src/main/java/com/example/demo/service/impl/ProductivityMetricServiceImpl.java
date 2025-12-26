@@ -6,6 +6,7 @@ import com.example.demo.repository.*;
 import com.example.demo.service.ProductivityMetricService;
 import com.example.demo.util.ProductivityCalculator;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -22,64 +23,79 @@ public class ProductivityMetricServiceImpl implements ProductivityMetricService 
             EmployeeProfileRepository employeeRepo,
             AnomalyRuleRepository ruleRepo,
             AnomalyFlagRecordRepository flagRepo) {
+
         this.metricRepo = metricRepo;
         this.employeeRepo = employeeRepo;
         this.ruleRepo = ruleRepo;
         this.flagRepo = flagRepo;
     }
 
-    public ProductivityMetricRecord recordMetric(ProductivityMetricRecord m) {
+    @Override
+    public ProductivityMetricRecord recordMetric(ProductivityMetricRecord metric) {
 
-        EmployeeProfile e = employeeRepo.findById(m.getEmployeeId())
+        EmployeeProfile employee = employeeRepo.findById(metric.getEmployeeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
 
-        if (!e.getActive()) throw new IllegalStateException("Employee not active");
+        if (!employee.getActive())
+            throw new ResourceNotFoundException("Employee not found");
 
-        boolean exists = metricRepo.findByEmployeeId(m.getEmployeeId())
-                .stream()
-                .anyMatch(x -> x.getDate().equals(m.getDate()));
-
-        if (exists) throw new IllegalStateException("Metric already exists");
+        metric.setEmployee(employee);
 
         double score = ProductivityCalculator.computeScore(
-                Math.max(0, m.getHoursLogged()),
-                Math.max(0, m.getTasksCompleted()),
-                Math.max(0, m.getMeetingsAttended())
+                metric.getHoursLogged(),
+                metric.getTasksCompleted(),
+                metric.getMeetingsAttended()
         );
 
-        m.setProductivityScore(score);
-        ProductivityMetricRecord saved = metricRepo.save(m);
+        metric.setProductivityScore(score);
 
-        ruleRepo.findByActiveTrue().forEach(r -> {
-            if (score < r.getThresholdValue()) {
-                AnomalyFlagRecord f = new AnomalyFlagRecord();
-                f.setEmployeeId(m.getEmployeeId());
-                f.setMetricId(saved.getId());
-                f.setRuleCode(r.getRuleCode());
-                f.setSeverity("LOW");
-                f.setDetails("Threshold breached");
-                flagRepo.save(f);
+        ProductivityMetricRecord saved = metricRepo.save(metric);
+
+        ruleRepo.findByActiveTrue().forEach(rule -> {
+            if (score < rule.getThresholdValue()) {
+                AnomalyFlagRecord flag = new AnomalyFlagRecord();
+                flag.setEmployee(employee);
+                flag.setMetric(saved);
+                flag.setRuleCode(rule.getRuleCode());
+                flag.setSeverity("LOW");
+                flag.setDetails("Threshold breached");
+                flagRepo.save(flag);
             }
         });
 
         return saved;
     }
 
-    public ProductivityMetricRecord updateMetric(Long id, ProductivityMetricRecord m) {
-        ProductivityMetricRecord old = metricRepo.findById(id)
+    @Override
+    public ProductivityMetricRecord updateMetric(Long id, ProductivityMetricRecord updated) {
+        ProductivityMetricRecord existing = metricRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Metric not found"));
-        m.setId(old.getId());
-        return recordMetric(m);
+
+        existing.setHoursLogged(updated.getHoursLogged());
+        existing.setTasksCompleted(updated.getTasksCompleted());
+        existing.setMeetingsAttended(updated.getMeetingsAttended());
+
+        double score = ProductivityCalculator.computeScore(
+                updated.getHoursLogged(),
+                updated.getTasksCompleted(),
+                updated.getMeetingsAttended()
+        );
+
+        existing.setProductivityScore(score);
+        return metricRepo.save(existing);
     }
 
+    @Override
     public List<ProductivityMetricRecord> getMetricsByEmployee(Long employeeId) {
         return metricRepo.findByEmployeeId(employeeId);
     }
 
+    @Override
     public Optional<ProductivityMetricRecord> getMetricById(Long id) {
         return metricRepo.findById(id);
     }
 
+    @Override
     public List<ProductivityMetricRecord> getAllMetrics() {
         return metricRepo.findAll();
     }
