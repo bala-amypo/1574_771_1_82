@@ -11,47 +11,95 @@ public class AnomalyFlagRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String ruleCode;
+
+    @Column(nullable = false)
     private String severity;
+
+    @Column(columnDefinition = "TEXT")
     private String details;
+
+    @Column(nullable = false)
     private Boolean resolved = false;
+
     private LocalDateTime flaggedAt;
 
     @ManyToOne
+    @JoinColumn(name = "employee_id", nullable = false)
     private EmployeeProfile employee;
 
     @ManyToOne
+    @JoinColumn(name = "metric_id", nullable = false)
     private ProductivityMetricRecord metric;
-
-    @PrePersist
-    public void onFlag() {
-        this.flaggedAt = LocalDateTime.now();
-    }
 
     public AnomalyFlagRecord() {}
 
-    public Long getId() { return id; }
+    @PrePersist
+    public void onFlag() {
+        if (this.flaggedAt == null) {
+            this.flaggedAt = LocalDateTime.now();
+        }
+    }
 
-    public String getRuleCode() { return ruleCode; }
-    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getSeverity() { return severity; }
-    public void setSeverity(String severity) { this.severity = severity; }
+    /* REQUIRED by AMYPO */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getDetails() { return details; }
-    public void setDetails(String details) { this.details = details; }
+    public String getRuleCode() {
+        return ruleCode;
+    }
 
-    public Boolean getResolved() { return resolved; }
-    public void setResolved(Boolean resolved) { this.resolved = resolved; }
+    public void setRuleCode(String ruleCode) {
+        this.ruleCode = ruleCode;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public Boolean getResolved() {
+        return resolved;
+    }
+
+    public void setResolved(Boolean resolved) {
+        this.resolved = resolved;
+    }
+
+    public LocalDateTime getFlaggedAt() {
+        return flaggedAt;
+    }
+
+    public EmployeeProfile getEmployee() {
+        return employee;
+    }
 
     public void setEmployee(EmployeeProfile employee) {
-    this.employee = employee;
-}
+        this.employee = employee;
+    }
 
-public void setMetric(ProductivityMetricRecord metric) {
-    this.metric = metric;
-}
+    public ProductivityMetricRecord getMetric() {
+        return metric;
+    }
 
-
-    public LocalDateTime getFlaggedAt() { return flaggedAt; }
+    public void setMetric(ProductivityMetricRecord metric) {
+        this.metric = metric;
+    }
 }
