@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.model.AnomalyFlagRecord;
 import com.example.demo.service.AnomalyFlagService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,27 +19,29 @@ public class AnomalyFlagController {
     }
 
     @PostMapping
-    public AnomalyFlagRecord create(@RequestBody AnomalyFlagRecord record) {
-        return anomalyFlagService.flagAnomaly(record);
+    public ResponseEntity<AnomalyFlagRecord> create(@RequestBody AnomalyFlagRecord record) {
+        AnomalyFlagRecord saved = anomalyFlagService.flagAnomaly(record);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/resolve")
-    public AnomalyFlagRecord resolve(@PathVariable Long id) {
-        return anomalyFlagService.resolveFlag(id);
+    public ResponseEntity<AnomalyFlagRecord> resolve(@PathVariable Long id) {
+        AnomalyFlagRecord resolved = anomalyFlagService.resolveFlag(id);
+        return ResponseEntity.ok(resolved);
     }
 
     @GetMapping("/employee/{employeeId}")
-    public List<AnomalyFlagRecord> byEmployee(@PathVariable Long employeeId) {
-        return anomalyFlagService.getFlagsByEmployee(employeeId);
+    public ResponseEntity<List<AnomalyFlagRecord>> byEmployee(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(anomalyFlagService.getFlagsByEmployee(employeeId));
     }
 
     @GetMapping("/metric/{metricId}")
-    public List<AnomalyFlagRecord> byMetric(@PathVariable Long metricId) {
-        return anomalyFlagService.getFlagsByMetric(metricId);
+    public ResponseEntity<List<AnomalyFlagRecord>> byMetric(@PathVariable Long metricId) {
+        return ResponseEntity.ok(anomalyFlagService.getFlagsByMetric(metricId));
     }
 
     @GetMapping
-    public List<AnomalyFlagRecord> getAll() {
-        return anomalyFlagService.getAllFlags();
+    public ResponseEntity<List<AnomalyFlagRecord>> getAll() {
+        return ResponseEntity.ok(anomalyFlagService.getAllFlags());
     }
 }
