@@ -1,8 +1,8 @@
 package com.example.demo.config;
 
+import com.example.demo.security.CustomUserDetailsService;
 import com.example.demo.security.JwtAuthenticationFilter;
 import com.example.demo.security.JwtTokenProvider;
-import com.example.demo.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,9 +18,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
+    public JwtTokenProvider jwtTokenProvider() {
+        return new JwtTokenProvider(
+                "my-secret-key-my-secret-key-my-secret-key",
+                86400000
+        );
+    }
+
+    @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(
             JwtTokenProvider jwtTokenProvider,
             CustomUserDetailsService userDetailsService) {
+
         return new JwtAuthenticationFilter(jwtTokenProvider, userDetailsService);
     }
 
