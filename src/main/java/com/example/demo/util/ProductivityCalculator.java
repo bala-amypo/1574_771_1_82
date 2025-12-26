@@ -1,28 +1,20 @@
 package com.example.demo.util;
 
-/**
- * Productivity score logic aligned with spec/tests:
- * - NaN/infinite => 0.0
- * - negative values normalized to 0
- * - formula: (hours * 10) + (tasks * 5) - (meetings * 5)
- * - clamp to [0.0, 100.0]
- * - round to 2 decimals
- */
-public final class ProductivityCalculator {
+public class ProductivityCalculator {
 
-    private ProductivityCalculator() {}
+    public static double computeScore(double hours,
+                                      int tasks,
+                                      int meetings) {
 
-    public static double computeScore(double hoursLogged, int tasksCompleted, int meetingsAttended) {
-        if (Double.isNaN(hoursLogged) || Double.isInfinite(hoursLogged)) {
-            return 0.0;
-        }
-        double hours = Math.max(0.0, hoursLogged);
-        int tasks = Math.max(0, tasksCompleted);
-        int meetings = Math.max(0, meetingsAttended);
+        if (Double.isNaN(hours) || hours < 0) hours = 0;
+        if (tasks < 0) tasks = 0;
+        if (meetings < 0) meetings = 0;
 
-        double raw = hours * 10.0 + tasks * 5.0 - meetings * 5.0;
-        double clamped = Math.max(0.0, Math.min(100.0, raw));
-        double rounded = Math.round(clamped * 100.0) / 100.0;
-        return rounded;
+        double score = (hours * 10) + (tasks * 5) + (meetings * 2);
+
+        if (score < 0) score = 0;
+        if (score > 100) score = 100;
+
+        return Math.round(score * 100.0) / 100.0;
     }
 }
