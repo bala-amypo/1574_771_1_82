@@ -1,29 +1,17 @@
 package com.example.demo.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.*;
 import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.*;
 
 @Configuration
 public class SwaggerConfig {
 
     @Bean
-    public OpenAPI customOpenAPI() {
-
-        SecurityScheme bearerAuth = new SecurityScheme()
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT");
-
+    public OpenAPI api() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Remote Work Productivity Metrics Collector API")
-                        .version("1.0")
-                        .description("API documentation for productivity tracking system"))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .schemaRequirement("bearerAuth", bearerAuth);
+                        .title("Remote Work Productivity Metrics Collector")
+                        .version("1.0"));
     }
 }
