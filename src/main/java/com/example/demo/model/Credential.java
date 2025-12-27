@@ -4,42 +4,40 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(
-    name = "credentials",
-    uniqueConstraints = @UniqueConstraint(columnNames = "credentialId")
-)
+@Table(name = "credentials")
 public class Credential {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
+    private Long employeeId;
+
+    @Column(unique = true)
     private String credentialId;
+
     private String issuer;
-    private String status = "PENDING";
 
     private LocalDateTime issuedAt;
     private LocalDateTime expiresAt;
 
+    private String status;
+
     @Column(columnDefinition = "TEXT")
     private String metadataJson;
 
-    @ManyToOne
-    @JoinColumn(name = "employee_id")
-    private EmployeeProfile employee;
-
     public Credential() {}
-
-    @PrePersist
-    public void onCreate() {
-        this.issuedAt = LocalDateTime.now();
-        if (this.status == null) {
-            this.status = "PENDING";
-        }
-    }
 
     public Long getId() {
         return id;
+    }
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getCredentialId() {
@@ -58,20 +56,12 @@ public class Credential {
         this.issuer = issuer;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public boolean isVerified() {
-        return "VERIFIED".equalsIgnoreCase(status);
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public LocalDateTime getIssuedAt() {
         return issuedAt;
+    }
+
+    public void setIssuedAt(LocalDateTime issuedAt) {
+        this.issuedAt = issuedAt;
     }
 
     public LocalDateTime getExpiresAt() {
@@ -82,24 +72,19 @@ public class Credential {
         this.expiresAt = expiresAt;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public String getMetadataJson() {
         return metadataJson;
     }
 
     public void setMetadataJson(String metadataJson) {
         this.metadataJson = metadataJson;
-    }
-
-    public EmployeeProfile getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(EmployeeProfile employee) {
-        this.employee = employee;
-    }
-
-    /* 🔥 AMYPO TEST CRITICAL METHOD */
-    public Long getEmployeeId() {
-        return employee != null ? employee.getId() : null;
     }
 }

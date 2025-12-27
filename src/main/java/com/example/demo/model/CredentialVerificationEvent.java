@@ -8,20 +8,14 @@ import java.time.LocalDateTime;
 public class CredentialVerificationEvent {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
+
+    private Long credentialId;
 
     private LocalDateTime verifiedAt;
     private String result;
     private String details;
-
-    @ManyToOne
-    private Credential credential;
-
-    @PrePersist
-    public void onVerify() {
-        this.verifiedAt = LocalDateTime.now();
-    }
 
     public CredentialVerificationEvent() {}
 
@@ -29,8 +23,20 @@ public class CredentialVerificationEvent {
         return id;
     }
 
+    public Long getCredentialId() {
+        return credentialId;
+    }
+
+    public void setCredentialId(Long credentialId) {
+        this.credentialId = credentialId;
+    }
+
     public LocalDateTime getVerifiedAt() {
         return verifiedAt;
+    }
+
+    public void setVerifiedAt(LocalDateTime verifiedAt) {
+        this.verifiedAt = verifiedAt;
     }
 
     public String getResult() {
@@ -47,9 +53,5 @@ public class CredentialVerificationEvent {
 
     public void setDetails(String details) {
         this.details = details;
-    }
-
-    public void setCredential(Credential credential) {
-        this.credential = credential;
     }
 }
