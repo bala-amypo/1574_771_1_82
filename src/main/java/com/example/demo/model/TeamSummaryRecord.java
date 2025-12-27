@@ -21,18 +21,59 @@ public class TeamSummaryRecord {
 
     public TeamSummaryRecord() {}
 
-    public void setTeamName(String teamName) { this.teamName = teamName; }
-    public String getTeamName() { return teamName; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setAvgHoursLogged(Double avgHoursLogged) { this.avgHoursLogged = avgHoursLogged; }
-    public Double getAvgHoursLogged() { return avgHoursLogged; }
+    public String getTeamName() {
+        return teamName;
+    }
 
-    public void setAvgScore(Double avgScore) { this.avgScore = avgScore; }
-    public Double getAvgScore() { return avgScore; }
+    public void setTeamName(String teamName) {
+        this.teamName = teamName;
+    }
 
-    public void setAnomalyCount(Integer anomalyCount) { this.anomalyCount = anomalyCount; }
-    public Integer getAnomalyCount() { return anomalyCount; }
+    public LocalDate getSummaryDate() {
+        return summaryDate;
+    }
 
-    public void setSummaryDate(LocalDate summaryDate) { this.summaryDate = summaryDate; }
-    public LocalDate getSummaryDate() { return summaryDate; }
+    public void setSummaryDate(LocalDate summaryDate) {
+        this.summaryDate = summaryDate;
+    }
+
+    public Double getAvgHoursLogged() {
+        return avgHoursLogged;
+    }
+
+    public void setAvgHoursLogged(Double avgHoursLogged) {
+        this.avgHoursLogged = avgHoursLogged;
+    }
+
+    public Double getAvgTasksCompleted() {
+        return avgTasksCompleted;
+    }
+
+    public void setAvgTasksCompleted(Double avgTasksCompleted) {
+        this.avgTasksCompleted = avgTasksCompleted;
+    }
+
+    public Double getAvgScore() {
+        return avgScore;
+    }
+
+    public void setAvgScore(Double avgScore) {
+        this.avgScore = avgScore;
+    }
+
+    public Integer getAnomalyCount() {
+        return anomalyCount;
+    }
+
+    public void setAnomalyCount(Integer anomalyCount) {
+        this.anomalyCount = anomalyCount;
+    }
+
+    public LocalDateTime getGeneratedAt() {
+        return generatedAt;
+    }
 }

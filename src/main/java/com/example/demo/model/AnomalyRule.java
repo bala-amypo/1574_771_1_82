@@ -20,9 +20,47 @@ public class AnomalyRule {
 
     public AnomalyRule() {}
 
-    public String getRuleCode() { return ruleCode; }
-    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
+    public Long getId() {
+        return id;
+    }
 
-    public Double getThresholdValue() { return thresholdValue; }
-    public void setThresholdValue(Double thresholdValue) { this.thresholdValue = thresholdValue; }
+    public String getRuleCode() {
+        return ruleCode;
+    }
+
+    public void setRuleCode(String ruleCode) {
+        this.ruleCode = ruleCode;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getThresholdType() {
+        return thresholdType;
+    }
+
+    public void setThresholdType(String thresholdType) {
+        this.thresholdType = thresholdType;
+    }
+
+    public Double getThresholdValue() {
+        return thresholdValue;
+    }
+
+    public void setThresholdValue(Double thresholdValue) {
+        this.thresholdValue = thresholdValue;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 }

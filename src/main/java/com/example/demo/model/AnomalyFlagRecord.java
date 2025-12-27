@@ -21,18 +21,59 @@ public class AnomalyFlagRecord {
 
     public AnomalyFlagRecord() {}
 
-    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
-    public String getRuleCode() { return ruleCode; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setResolved(Boolean resolved) { this.resolved = resolved; }
-    public Boolean getResolved() { return resolved; }
+    public Long getEmployeeId() {
+        return employeeId;
+    }
 
-    public void setDetails(String details) { this.details = details; }
-    public String getDetails() { return details; }
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
 
-    public void setSeverity(String severity) { this.severity = severity; }
-    public String getSeverity() { return severity; }
+    public Long getMetricId() {
+        return metricId;
+    }
 
-    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
-    public void setMetricId(Long metricId) { this.metricId = metricId; }
+    public void setMetricId(Long metricId) {
+        this.metricId = metricId;
+    }
+
+    public String getRuleCode() {
+        return ruleCode;
+    }
+
+    public void setRuleCode(String ruleCode) {
+        this.ruleCode = ruleCode;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public Boolean getResolved() {
+        return resolved;
+    }
+
+    public void setResolved(Boolean resolved) {
+        this.resolved = resolved;
+    }
+
+    public LocalDateTime getFlaggedAt() {
+        return flaggedAt;
+    }
 }
