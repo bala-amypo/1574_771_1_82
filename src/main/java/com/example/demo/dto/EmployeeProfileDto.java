@@ -13,26 +13,7 @@ public class EmployeeProfileDto {
     private Boolean active;
     private LocalDateTime createdAt;
 
-    public EmployeeProfileDto() {
-    }
-
-    public EmployeeProfileDto(Long id,
-                              String employeeId,
-                              String fullName,
-                              String email,
-                              String teamName,
-                              String role,
-                              Boolean active,
-                              LocalDateTime createdAt) {
-        this.id = id;
-        this.employeeId = employeeId;
-        this.fullName = fullName;
-        this.email = email;
-        this.teamName = teamName;
-        this.role = role;
-        this.active = active;
-        this.createdAt = createdAt;
-    }
+    public EmployeeProfileDto() {}
 
     public Long getId() {
         return id;

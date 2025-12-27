@@ -9,15 +9,7 @@ public class CredentialStatusDto {
     private LocalDateTime verifiedAt;
     private String details;
 
-    public CredentialStatusDto() {
-    }
-
-    public CredentialStatusDto(String credentialId, String status) {
-        this.credentialId = credentialId;
-        this.status = status;
-        this.verifiedAt = LocalDateTime.now();
-        this.details = null;
-    }
+    public CredentialStatusDto() {}
 
     public CredentialStatusDto(String credentialId,
                                String status,

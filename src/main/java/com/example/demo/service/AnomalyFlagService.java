@@ -1,8 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.model.AnomalyFlagRecord;
-
-import java.util.List;
+import java.util.*;
 
 public interface AnomalyFlagService {
     AnomalyFlagRecord flagAnomaly(AnomalyFlagRecord flag);

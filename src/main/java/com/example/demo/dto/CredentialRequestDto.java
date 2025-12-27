@@ -11,22 +11,7 @@ public class CredentialRequestDto {
     private LocalDateTime expiresAt;
     private String metadataJson;
 
-    public CredentialRequestDto() {
-    }
-
-    public CredentialRequestDto(Long employeeId,
-                                String credentialId,
-                                String issuer,
-                                LocalDateTime issuedAt,
-                                LocalDateTime expiresAt,
-                                String metadataJson) {
-        this.employeeId = employeeId;
-        this.credentialId = credentialId;
-        this.issuer = issuer;
-        this.issuedAt = issuedAt;
-        this.expiresAt = expiresAt;
-        this.metadataJson = metadataJson;
-    }
+    public CredentialRequestDto() {}
 
     public Long getEmployeeId() {
         return employeeId;
