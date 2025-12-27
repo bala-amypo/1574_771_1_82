@@ -10,30 +10,27 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserAccountServiceImpl implements UserAccountService {
 
-    private final UserAccountRepository repository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserAccountRepository repo;
+    private final PasswordEncoder encoder;
 
-    public UserAccountServiceImpl(UserAccountRepository repository,
-                                  PasswordEncoder passwordEncoder) {
-        this.repository = repository;
-        this.passwordEncoder = passwordEncoder;
+    public UserAccountServiceImpl(UserAccountRepository repo,
+                                  PasswordEncoder encoder) {
+        this.repo = repo;
+        this.encoder = encoder;
     }
 
-    @Override
     public UserAccount registerUser(UserAccount user) {
-        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
-        return repository.save(user);
+        user.setPasswordHash(encoder.encode(user.getPasswordHash()));
+        return repo.save(user);
     }
 
-    @Override
     public UserAccount findByEmail(String email) {
-        return repository.findByEmail(email)
+        return repo.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 
-    @Override
     public UserAccount findById(Long id) {
-        return repository.findById(id)
+        return repo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
     }
 }
