@@ -8,98 +8,31 @@ import java.time.LocalDateTime;
 public class AnomalyFlagRecord {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
-    @Column(nullable = false)
+    private Long employeeId;
+    private Long metricId;
     private String ruleCode;
-
-    @Column(nullable = false)
     private String severity;
-
-    @Column(columnDefinition = "TEXT")
     private String details;
-
-    @Column(nullable = false)
     private Boolean resolved = false;
-
-    private LocalDateTime flaggedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "employee_id", nullable = false)
-    private EmployeeProfile employee;
-
-    @ManyToOne
-    @JoinColumn(name = "metric_id", nullable = false)
-    private ProductivityMetricRecord metric;
+    private LocalDateTime flaggedAt = LocalDateTime.now();
 
     public AnomalyFlagRecord() {}
 
-    @PrePersist
-    public void onFlag() {
-        if (this.flaggedAt == null) {
-            this.flaggedAt = LocalDateTime.now();
-        }
-    }
+    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
+    public String getRuleCode() { return ruleCode; }
 
-    public Long getId() {
-        return id;
-    }
+    public void setResolved(Boolean resolved) { this.resolved = resolved; }
+    public Boolean getResolved() { return resolved; }
 
-    /* REQUIRED by AMYPO */
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setDetails(String details) { this.details = details; }
+    public String getDetails() { return details; }
 
-    public String getRuleCode() {
-        return ruleCode;
-    }
+    public void setSeverity(String severity) { this.severity = severity; }
+    public String getSeverity() { return severity; }
 
-    public void setRuleCode(String ruleCode) {
-        this.ruleCode = ruleCode;
-    }
-
-    public String getSeverity() {
-        return severity;
-    }
-
-    public void setSeverity(String severity) {
-        this.severity = severity;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
-    public Boolean getResolved() {
-        return resolved;
-    }
-
-    public void setResolved(Boolean resolved) {
-        this.resolved = resolved;
-    }
-
-    public LocalDateTime getFlaggedAt() {
-        return flaggedAt;
-    }
-
-    public EmployeeProfile getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(EmployeeProfile employee) {
-        this.employee = employee;
-    }
-
-    public ProductivityMetricRecord getMetric() {
-        return metric;
-    }
-
-    public void setMetric(ProductivityMetricRecord metric) {
-        this.metric = metric;
-    }
+    public void setEmployeeId(Long employeeId) { this.employeeId = employeeId; }
+    public void setMetricId(Long metricId) { this.metricId = metricId; }
 }

@@ -3,17 +3,16 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(
-    name = "anomaly_rules",
-    uniqueConstraints = @UniqueConstraint(columnNames = "ruleCode")
-)
+@Table(name = "anomaly_rules")
 public class AnomalyRule {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
+    @Column(unique = true)
     private String ruleCode;
+
     private String description;
     private String thresholdType;
     private Double thresholdValue;
@@ -21,51 +20,9 @@ public class AnomalyRule {
 
     public AnomalyRule() {}
 
-    public Long getId() {
-        return id;
-    }
+    public String getRuleCode() { return ruleCode; }
+    public void setRuleCode(String ruleCode) { this.ruleCode = ruleCode; }
 
-    public String getRuleCode() {
-        return ruleCode;
-    }
-
-    public void setRuleCode(String ruleCode) {
-        this.ruleCode = ruleCode;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getThresholdType() {
-        return thresholdType;
-    }
-
-    public void setThresholdType(String thresholdType) {
-        this.thresholdType = thresholdType;
-    }
-
-    public Double getThresholdValue() {
-        return thresholdValue;
-    }
-
-    public void setThresholdValue(Double thresholdValue) {
-        this.thresholdValue = thresholdValue;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public boolean isActive() {
-        return Boolean.TRUE.equals(active);
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
+    public Double getThresholdValue() { return thresholdValue; }
+    public void setThresholdValue(Double thresholdValue) { this.thresholdValue = thresholdValue; }
 }

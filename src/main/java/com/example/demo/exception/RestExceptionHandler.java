@@ -15,7 +15,7 @@ public class RestExceptionHandler {
     }
 
     @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class})
-    public ResponseEntity<?> handleBadRequest(RuntimeException ex) {
+    public ResponseEntity<?> handleBad(RuntimeException ex) {
         return ResponseEntity.badRequest()
                 .body(Map.of("error", ex.getMessage()));
     }
