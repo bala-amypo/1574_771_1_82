@@ -2,8 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.model.AnomalyFlagRecord;
 import com.example.demo.service.AnomalyFlagService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,36 +10,34 @@ import java.util.List;
 @RequestMapping("/api/anomalies")
 public class AnomalyFlagController {
 
-    private final AnomalyFlagService anomalyFlagService;
+    private final AnomalyFlagService service;
 
-    public AnomalyFlagController(AnomalyFlagService anomalyFlagService) {
-        this.anomalyFlagService = anomalyFlagService;
+    public AnomalyFlagController(AnomalyFlagService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<AnomalyFlagRecord> create(@RequestBody AnomalyFlagRecord record) {
-        AnomalyFlagRecord saved = anomalyFlagService.flagAnomaly(record);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    public AnomalyFlagRecord flag(@RequestBody AnomalyFlagRecord flag) {
+        return service.flagAnomaly(flag);
     }
 
     @PutMapping("/{id}/resolve")
-    public ResponseEntity<AnomalyFlagRecord> resolve(@PathVariable Long id) {
-        AnomalyFlagRecord resolved = anomalyFlagService.resolveFlag(id);
-        return ResponseEntity.ok(resolved);
+    public AnomalyFlagRecord resolve(@PathVariable Long id) {
+        return service.resolveFlag(id);
     }
 
     @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<AnomalyFlagRecord>> byEmployee(@PathVariable Long employeeId) {
-        return ResponseEntity.ok(anomalyFlagService.getFlagsByEmployee(employeeId));
+    public List<AnomalyFlagRecord> byEmployee(@PathVariable Long employeeId) {
+        return service.getFlagsByEmployee(employeeId);
     }
 
     @GetMapping("/metric/{metricId}")
-    public ResponseEntity<List<AnomalyFlagRecord>> byMetric(@PathVariable Long metricId) {
-        return ResponseEntity.ok(anomalyFlagService.getFlagsByMetric(metricId));
+    public List<AnomalyFlagRecord> byMetric(@PathVariable Long metricId) {
+        return service.getFlagsByMetric(metricId);
     }
 
     @GetMapping
-    public ResponseEntity<List<AnomalyFlagRecord>> getAll() {
-        return ResponseEntity.ok(anomalyFlagService.getAllFlags());
+    public List<AnomalyFlagRecord> all() {
+        return service.getAllFlags();
     }
 }
