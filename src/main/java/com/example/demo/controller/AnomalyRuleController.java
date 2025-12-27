@@ -10,30 +10,30 @@ import java.util.List;
 @RequestMapping("/api/anomaly-rules")
 public class AnomalyRuleController {
 
-    private final AnomalyRuleService anomalyRuleService;
+    private final AnomalyRuleService service;
 
-    public AnomalyRuleController(AnomalyRuleService anomalyRuleService) {
-        this.anomalyRuleService = anomalyRuleService;
+    public AnomalyRuleController(AnomalyRuleService service) {
+        this.service = service;
     }
 
     @PostMapping
     public AnomalyRule create(@RequestBody AnomalyRule rule) {
-        return anomalyRuleService.createRule(rule);
+        return service.createRule(rule);
     }
 
     @PutMapping("/{id}")
     public AnomalyRule update(@PathVariable Long id,
                               @RequestBody AnomalyRule rule) {
-        return anomalyRuleService.updateRule(id, rule);
+        return service.updateRule(id, rule);
     }
 
     @GetMapping("/active")
-    public List<AnomalyRule> activeRules() {
-        return anomalyRuleService.getActiveRules();
+    public List<AnomalyRule> getActive() {
+        return service.getActiveRules();
     }
 
     @GetMapping
     public List<AnomalyRule> getAll() {
-        return anomalyRuleService.getAllRules();
+        return service.getAllRules();
     }
 }
