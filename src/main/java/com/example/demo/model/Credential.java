@@ -4,27 +4,27 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "credentials")
+@Table(name = "credentials",
+       uniqueConstraints = @UniqueConstraint(columnNames = "credentialId"))
 public class Credential {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long employeeId;
-
-    @Column(unique = true)
     private String credentialId;
-
     private String issuer;
+    private String status;
 
     private LocalDateTime issuedAt;
     private LocalDateTime expiresAt;
 
-    private String status;
-
     @Column(columnDefinition = "TEXT")
     private String metadataJson;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private EmployeeProfile employee;
 
     public Credential() {}
 
@@ -32,21 +32,9 @@ public class Credential {
         return id;
     }
 
-    public Long getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(Long employeeId) {
-        this.employeeId = employeeId;
-    }
-
     public String getCredentialId() {
         return credentialId;
     }
-    public void setEmployee(EmployeeProfile employee) {
-    this.employee = employee;
-}
-
 
     public void setCredentialId(String credentialId) {
         this.credentialId = credentialId;
@@ -58,6 +46,14 @@ public class Credential {
 
     public void setIssuer(String issuer) {
         this.issuer = issuer;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public LocalDateTime getIssuedAt() {
@@ -76,19 +72,19 @@ public class Credential {
         this.expiresAt = expiresAt;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public String getMetadataJson() {
         return metadataJson;
     }
 
     public void setMetadataJson(String metadataJson) {
         this.metadataJson = metadataJson;
+    }
+
+    public EmployeeProfile getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(EmployeeProfile employee) {
+        this.employee = employee;
     }
 }
