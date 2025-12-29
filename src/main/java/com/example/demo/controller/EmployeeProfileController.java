@@ -1,84 +1,67 @@
-// package com.example.demo.controller;
-
-// import com.example.demo.model.EmployeeProfile;
-// import com.example.demo.service.EmployeeProfileService;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.http.ResponseEntity;
-// import org.springframework.web.bind.annotation.*;
-
-// @RestController
-// @RequestMapping("/api/employees")
-// public class EmployeeController {
-
-//     @Autowired
-//     private EmployeeProfileService employeeService;
-
-//     @PostMapping
-//     public ResponseEntity<EmployeeProfile> createEmployee(@RequestBody EmployeeProfile employee) {
-//         EmployeeProfile created = employeeService.createEmployee(employee);
-//         return ResponseEntity.ok(created);
-//     }
-
-//     @GetMapping("/{id}")
-//     public ResponseEntity<EmployeeProfile> getEmployee(@PathVariable Long id) {
-//         try {
-//             return ResponseEntity.ok(employeeService.getEmployeeById(id));
-//         } catch (RuntimeException e) {
-//             return ResponseEntity.notFound().build();
-//         }
-//     }
-
-//     @PatchMapping("/{id}/status")
-//     public ResponseEntity<EmployeeProfile> updateStatus(@PathVariable Long id, @RequestParam boolean active) {
-//         try {
-//             return ResponseEntity.ok(employeeService.updateEmployeeStatus(id, active));
-//         } catch (RuntimeException e) {
-//             return ResponseEntity.notFound().build();
-//         }
-//     }
-// }
-
 package com.example.demo.controller;
 
-import com.example.demo.model.EmployeeProfile;
-import com.example.demo.service.EmployeeProfileService;
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.model.UserAccount;
+import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.service.UserAccountService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/api/employees")
-@CrossOrigin(origins = "*")
+@RequestMapping("/auth")
+public class AuthController {
 
-public class EmployeeProfileController {
+    private final UserAccountService userAccountService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    private final EmployeeProfileService employeeService;
-
-    public EmployeeProfileController(EmployeeProfileService employeeService) {
-        this.employeeService = employeeService;
+    public AuthController(UserAccountService userAccountService,
+                          PasswordEncoder passwordEncoder,
+                          JwtTokenProvider jwtTokenProvider) {
+        this.userAccountService = userAccountService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @PostMapping
-    public ResponseEntity<EmployeeProfile> createEmployee(
-            @RequestBody EmployeeProfile employee) {
-        return ResponseEntity.ok(employeeService.createEmployee(employee));
+    @PostMapping("/register")
+    public ResponseEntity<UserAccount> register(@RequestBody Map<String, String> payload) {
+
+        UserAccount user = new UserAccount();
+        user.setUsername(payload.get("username"));
+        user.setEmail(payload.get("email"));
+        user.setPasswordHash(passwordEncoder.encode(payload.get("password")));
+        user.setRoles(Collections.singleton("ROLE_USER"));
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userAccountService.registerUser(user));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<EmployeeProfile> getEmployee(@PathVariable Long id) {
-        return ResponseEntity.ok(employeeService.getEmployeeById(id));
-    }
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
 
-    @GetMapping
-    public ResponseEntity<List<EmployeeProfile>> getAllEmployees() {
-        return ResponseEntity.ok(employeeService.getAllEmployees());
-    }
+        UserAccount user = userAccountService.findByEmail(request.getEmail());
 
-    @PutMapping("/{id}/status")
-    public ResponseEntity<EmployeeProfile> updateStatus(
-            @PathVariable Long id,
-            @RequestParam Boolean active) {
-        return ResponseEntity.ok(employeeService.updateEmployeeStatus(id, active));
+        if (user == null || !passwordEncoder.matches(
+                request.getPassword(), user.getPasswordHash())) {
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password"));
+        }
+
+        String token = jwtTokenProvider.generateToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRoles().iterator().next()
+        );
+
+        return ResponseEntity.ok(
+                new AuthResponse(token, user.getId(), user.getEmail(), user.getRoles())
+        );
     }
 }

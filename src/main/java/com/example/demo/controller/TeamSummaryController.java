@@ -1,51 +1,65 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.TeamSummaryRecord;
-import com.example.demo.service.TeamSummaryService;
+import com.example.demo.model.ProductivityMetricRecord;
+import com.example.demo.service.ProductivityMetricService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/api/team-summaries")
-public class TeamSummaryController {
+@RequestMapping("/api/metrics")
+public class ProductivityMetricController {
 
-    private final TeamSummaryService teamSummaryService;
+    private final ProductivityMetricService metricService;
 
-    public TeamSummaryController(TeamSummaryService teamSummaryService) {
-        this.teamSummaryService = teamSummaryService;
+    public ProductivityMetricController(ProductivityMetricService metricService) {
+        this.metricService = metricService;
     }
 
-    @PostMapping("/generate")
-    public ResponseEntity<TeamSummaryRecord> generate(
-            @RequestBody Map<String, String> payload) {
+    @PostMapping
+    public ResponseEntity<ProductivityMetricRecord> record(
+            @RequestBody ProductivityMetricRecord record) {
 
-        String teamName = payload.get("teamName");
-        LocalDate summaryDate = LocalDate.parse(payload.get("summaryDate"));
-
-        TeamSummaryRecord summary =
-                teamSummaryService.generateSummary(teamName, summaryDate);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(summary);
-    }
-
-    @GetMapping("/team/{teamName}")
-    public ResponseEntity<List<TeamSummaryRecord>> byTeam(
-            @PathVariable String teamName) {
-
-        return ResponseEntity.ok(
-                teamSummaryService.getSummariesByTeam(teamName)
+        return new ResponseEntity<>(
+                metricService.recordMetric(record),
+                HttpStatus.CREATED
         );
     }
 
-    @GetMapping
-    public ResponseEntity<List<TeamSummaryRecord>> getAll() {
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductivityMetricRecord> update(
+            @PathVariable Long id,
+            @RequestBody ProductivityMetricRecord record) {
+
         return ResponseEntity.ok(
-                teamSummaryService.getAllSummaries()
+                metricService.updateMetric(id, record)
+        );
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<ProductivityMetricRecord>> byEmployee(
+            @PathVariable Long employeeId) {
+
+        return ResponseEntity.ok(
+                metricService.getMetricsByEmployee(employeeId)
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ProductivityMetricRecord> getById(
+            @PathVariable Long id) {
+
+        return metricService.getMetricById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProductivityMetricRecord>> getAll() {
+        return ResponseEntity.ok(
+                metricService.getAllMetrics()
         );
     }
 }
