@@ -13,10 +13,10 @@ import java.util.List;
 @RequestMapping("/api/team-summaries")
 public class TeamSummaryController {
 
-    private final TeamSummaryService service;
+    private final TeamSummaryService teamSummaryService;
 
-    public TeamSummaryController(TeamSummaryService service) {
-        this.service = service;
+    public TeamSummaryController(TeamSummaryService teamSummaryService) {
+        this.teamSummaryService = teamSummaryService;
     }
 
     @PostMapping("/generate")
@@ -25,7 +25,7 @@ public class TeamSummaryController {
             @RequestParam LocalDate summaryDate) {
 
         return new ResponseEntity<>(
-                service.generateSummary(teamName, summaryDate),
+                teamSummaryService.generateSummary(teamName, summaryDate),
                 HttpStatus.CREATED
         );
     }
@@ -33,11 +33,16 @@ public class TeamSummaryController {
     @GetMapping("/team/{teamName}")
     public ResponseEntity<List<TeamSummaryRecord>> byTeam(
             @PathVariable String teamName) {
-        return ResponseEntity.ok(service.getSummariesByTeam(teamName));
+
+        return ResponseEntity.ok(
+                teamSummaryService.getSummariesByTeam(teamName)
+        );
     }
 
     @GetMapping
     public ResponseEntity<List<TeamSummaryRecord>> getAll() {
-        return ResponseEntity.ok(service.getAllSummaries());
+        return ResponseEntity.ok(
+                teamSummaryService.getAllSummaries()
+        );
     }
 }

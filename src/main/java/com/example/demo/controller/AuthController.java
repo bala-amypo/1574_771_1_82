@@ -38,10 +38,11 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
 
-        UserAccount user = userAccountService.findByEmail(request.getEmail());
+        UserAccount user =
+                userAccountService.findByEmail(request.getEmail());
 
-        if (user == null ||
-                !passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+        if (user == null || !passwordEncoder.matches(
+                request.getPassword(), user.getPasswordHash())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
@@ -52,7 +53,12 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(
-                new AuthResponse(token, user.getId(), user.getEmail(), user.getRoles())
+                new AuthResponse(
+                        token,
+                        user.getId(),
+                        user.getEmail(),
+                        user.getRoles()
+                )
         );
     }
 }
