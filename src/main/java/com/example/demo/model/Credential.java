@@ -43,6 +43,10 @@ public class Credential {
     public String getCredentialId() {
         return credentialId;
     }
+    public void setEmployee(EmployeeProfile employee) {
+    this.employee = employee;
+}
+
 
     public void setCredentialId(String credentialId) {
         this.credentialId = credentialId;

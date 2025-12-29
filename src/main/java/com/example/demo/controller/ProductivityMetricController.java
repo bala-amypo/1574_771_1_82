@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.EmployeeProfile;
-import com.example.demo.service.EmployeeProfileService;
+import com.example.demo.model.ProductivityMetricRecord;
+import com.example.demo.service.ProductivityMetricService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,51 +9,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/employees")
-public class EmployeeProfileController {
+@RequestMapping("/api/metrics")
+public class ProductivityMetricController {
 
-    private final EmployeeProfileService employeeProfileService;
+    private final ProductivityMetricService service;
 
-    public EmployeeProfileController(EmployeeProfileService employeeProfileService) {
-        this.employeeProfileService = employeeProfileService;
+    public ProductivityMetricController(ProductivityMetricService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeProfile> create(@RequestBody EmployeeProfile employee) {
-        return new ResponseEntity<>(
-                employeeProfileService.createEmployee(employee),
-                HttpStatus.CREATED
-        );
+    public ResponseEntity<ProductivityMetricRecord> record(
+            @RequestBody ProductivityMetricRecord record) {
+        return new ResponseEntity<>(service.recordMetric(record), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductivityMetricRecord> update(
+            @PathVariable Long id,
+            @RequestBody ProductivityMetricRecord record) {
+        return ResponseEntity.ok(service.updateMetric(id, record));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeProfile> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(
-                employeeProfileService.getEmployeeById(id)
-        );
+    public ResponseEntity<ProductivityMetricRecord> getById(@PathVariable Long id) {
+        return service.getMetricById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<ProductivityMetricRecord>> byEmployee(
+            @PathVariable Long employeeId) {
+        return ResponseEntity.ok(service.getMetricsByEmployee(employeeId));
     }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeProfile>> getAll() {
-        return ResponseEntity.ok(
-                employeeProfileService.getAllEmployees()
-        );
-    }
-
-    @PutMapping("/{id}/status")
-    public ResponseEntity<EmployeeProfile> updateStatus(
-            @PathVariable Long id,
-            @RequestParam boolean active) {
-
-        return ResponseEntity.ok(
-                employeeProfileService.updateEmployeeStatus(id, active)
-        );
-    }
-
-    @GetMapping("/lookup/{employeeId}")
-    public ResponseEntity<EmployeeProfile> lookup(@PathVariable String employeeId) {
-        return employeeProfileService.findByEmployeeId(employeeId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<List<ProductivityMetricRecord>> getAll() {
+        return ResponseEntity.ok(service.getAllMetrics());
     }
 }
