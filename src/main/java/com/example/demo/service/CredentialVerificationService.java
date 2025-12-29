@@ -1,12 +1,24 @@
+// package com.example.demo.service;
+
+// import com.example.demo.dto.CredentialStatusDto;
+// import com.example.demo.model.Credential;
+
+// import java.util.List;
+
+// public interface CredentialVerificationService {
+//     Credential registerCredential(Credential credential);
+//     CredentialStatusDto verifyCredential(String credentialId);
+//     List<Credential> getCredentialsForEmployee(Long employeeId);
+// }
 package com.example.demo.service;
 
-import com.example.demo.dto.CredentialRequestDto;
 import com.example.demo.dto.CredentialStatusDto;
 import com.example.demo.model.Credential;
+
 import java.util.List;
 
 public interface CredentialVerificationService {
-    Credential registerCredential(CredentialRequestDto dto);
+    Credential registerCredential(Credential credential);
     CredentialStatusDto verifyCredential(String credentialId);
     List<Credential> getCredentialsForEmployee(Long employeeId);
 }
