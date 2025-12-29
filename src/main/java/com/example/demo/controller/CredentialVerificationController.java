@@ -11,25 +11,27 @@ import java.util.List;
 @RequestMapping("/api/credentials")
 public class CredentialVerificationController {
 
-    private final CredentialVerificationService credentialService;
+    private final CredentialVerificationService service;
 
     public CredentialVerificationController(
-            CredentialVerificationService credentialService) {
-        this.credentialService = credentialService;
+            CredentialVerificationService service) {
+        this.service = service;
     }
 
     @PostMapping
     public Credential register(@RequestBody Credential credential) {
-        return credentialService.registerCredential(credential);
+        return service.registerCredential(credential);
     }
 
     @PostMapping("/{credentialId}/verify")
-    public CredentialStatusDto verify(@PathVariable String credentialId) {
-        return credentialService.verifyCredential(credentialId);
+    public CredentialStatusDto verify(
+            @PathVariable String credentialId) {
+        return service.verifyCredential(credentialId);
     }
 
     @GetMapping("/employee/{employeeId}")
-    public List<Credential> byEmployee(@PathVariable Long employeeId) {
-        return credentialService.getCredentialsForEmployee(employeeId);
+    public List<Credential> byEmployee(
+            @PathVariable Long employeeId) {
+        return service.getCredentialsForEmployee(employeeId);
     }
 }

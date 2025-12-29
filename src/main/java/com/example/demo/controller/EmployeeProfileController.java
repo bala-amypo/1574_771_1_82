@@ -2,8 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.model.EmployeeProfile;
 import com.example.demo.service.EmployeeProfileService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,37 +10,31 @@ import java.util.List;
 @RequestMapping("/api/employees")
 public class EmployeeProfileController {
 
-    private final EmployeeProfileService employeeService;
+    private final EmployeeProfileService service;
 
-    public EmployeeProfileController(EmployeeProfileService employeeService) {
-        this.employeeService = employeeService;
+    public EmployeeProfileController(EmployeeProfileService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<EmployeeProfile> create(@RequestBody EmployeeProfile employee) {
-        return new ResponseEntity<>(
-                employeeService.createEmployee(employee),
-                HttpStatus.CREATED
-        );
+    public EmployeeProfile create(@RequestBody EmployeeProfile employee) {
+        return service.createEmployee(employee);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeProfile> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(employeeService.getEmployeeById(id));
+    public EmployeeProfile getById(@PathVariable Long id) {
+        return service.getEmployeeById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<EmployeeProfile>> getAll() {
-        return ResponseEntity.ok(employeeService.getAllEmployees());
+    public List<EmployeeProfile> getAll() {
+        return service.getAllEmployees();
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<EmployeeProfile> updateStatus(
+    public EmployeeProfile updateStatus(
             @PathVariable Long id,
             @RequestParam boolean active) {
-
-        return ResponseEntity.ok(
-                employeeService.updateEmployeeStatus(id, active)
-        );
+        return service.updateEmployeeStatus(id, active);
     }
 }

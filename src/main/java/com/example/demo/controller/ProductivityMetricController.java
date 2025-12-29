@@ -2,8 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.model.ProductivityMetricRecord;
 import com.example.demo.service.ProductivityMetricService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,43 +10,34 @@ import java.util.List;
 @RequestMapping("/api/metrics")
 public class ProductivityMetricController {
 
-    private final ProductivityMetricService metricService;
+    private final ProductivityMetricService service;
 
-    public ProductivityMetricController(ProductivityMetricService metricService) {
-        this.metricService = metricService;
+    public ProductivityMetricController(
+            ProductivityMetricService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<ProductivityMetricRecord> record(
+    public ProductivityMetricRecord record(
             @RequestBody ProductivityMetricRecord record) {
-
-        return new ResponseEntity<>(
-                metricService.recordMetric(record),
-                HttpStatus.CREATED
-        );
+        return service.recordMetric(record);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductivityMetricRecord> update(
+    public ProductivityMetricRecord update(
             @PathVariable Long id,
             @RequestBody ProductivityMetricRecord record) {
-
-        return ResponseEntity.ok(
-                metricService.updateMetric(id, record)
-        );
+        return service.updateMetric(id, record);
     }
 
     @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<ProductivityMetricRecord>> byEmployee(
+    public List<ProductivityMetricRecord> byEmployee(
             @PathVariable Long employeeId) {
-
-        return ResponseEntity.ok(
-                metricService.getMetricsByEmployee(employeeId)
-        );
+        return service.getMetricsByEmployee(employeeId);
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductivityMetricRecord>> getAll() {
-        return ResponseEntity.ok(metricService.getAllMetrics());
+    public List<ProductivityMetricRecord> getAll() {
+        return service.getAllMetrics();
     }
 }
