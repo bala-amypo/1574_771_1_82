@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserAccountService userAccountService;
+    private final UserAccountService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(UserAccountService userAccountService,
+    public AuthController(UserAccountService userService,
                           PasswordEncoder passwordEncoder,
                           JwtTokenProvider jwtTokenProvider) {
-        this.userAccountService = userAccountService;
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtTokenProvider = jwtTokenProvider;
     }
@@ -29,17 +29,13 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<UserAccount> register(@RequestBody UserAccount user) {
         user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
-        return new ResponseEntity<>(
-                userAccountService.registerUser(user),
-                HttpStatus.CREATED
-        );
+        return new ResponseEntity<>(userService.registerUser(user), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
 
-        UserAccount user =
-                userAccountService.findByEmail(request.getEmail());
+        UserAccount user = userService.findByEmail(request.getEmail());
 
         if (user == null || !passwordEncoder.matches(
                 request.getPassword(), user.getPasswordHash())) {
@@ -53,12 +49,7 @@ public class AuthController {
         );
 
         return ResponseEntity.ok(
-                new AuthResponse(
-                        token,
-                        user.getId(),
-                        user.getEmail(),
-                        user.getRoles()
-                )
+                new AuthResponse(token, user.getId(), user.getEmail(), user.getRoles())
         );
     }
 }

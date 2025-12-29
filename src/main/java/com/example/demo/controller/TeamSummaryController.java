@@ -41,8 +41,6 @@ public class TeamSummaryController {
 
     @GetMapping
     public ResponseEntity<List<TeamSummaryRecord>> getAll() {
-        return ResponseEntity.ok(
-                teamSummaryService.getAllSummaries()
-        );
+        return ResponseEntity.ok(teamSummaryService.getAllSummaries());
     }
 }

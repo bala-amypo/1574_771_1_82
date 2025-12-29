@@ -49,8 +49,6 @@ public class ProductivityMetricController {
 
     @GetMapping
     public ResponseEntity<List<ProductivityMetricRecord>> getAll() {
-        return ResponseEntity.ok(
-                metricService.getAllMetrics()
-        );
+        return ResponseEntity.ok(metricService.getAllMetrics());
     }
 }
