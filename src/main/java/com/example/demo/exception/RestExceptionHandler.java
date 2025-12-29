@@ -1,22 +1,82 @@
+// package com.example.demo.exception;
+
+// import org.springframework.http.HttpStatus;
+// import org.springframework.http.ResponseEntity;
+// import org.springframework.web.bind.annotation.ExceptionHandler;
+// import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+// import java.util.HashMap;
+// import java.util.Map;
+
+// @RestControllerAdvice
+// public class RestExceptionHandler {
+
+//     @ExceptionHandler(ResourceNotFoundException.class)
+//     public ResponseEntity<Map<String, String>> handleResourceNotFoundException(ResourceNotFoundException ex) {
+//         Map<String, String> error = new HashMap<>();
+//         error.put("error", ex.getMessage());
+//         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+//     }
+
+//     @ExceptionHandler(IllegalStateException.class)
+//     public ResponseEntity<Map<String, String>> handleIllegalStateException(IllegalStateException ex) {
+//         Map<String, String> error = new HashMap<>();
+//         error.put("error", ex.getMessage());
+//         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+//     }
+
+//     @ExceptionHandler(IllegalArgumentException.class)
+//     public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+//         Map<String, String> error = new HashMap<>();
+//         error.put("error", ex.getMessage());
+//         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+//     }
+
+//     @ExceptionHandler(RuntimeException.class)
+//     public ResponseEntity<Map<String, String>> handleRuntimeException(RuntimeException ex) {
+//         Map<String, String> error = new HashMap<>();
+//         error.put("error", "Internal server error");
+//         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+//     }
+// }
 package com.example.demo.exception;
 
-import org.springframework.http.*;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class RestExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", ex.getMessage()));
+    public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({IllegalStateException.class, IllegalArgumentException.class})
-    public ResponseEntity<?> handleBad(RuntimeException ex) {
-        return ResponseEntity.badRequest()
-                .body(Map.of("error", ex.getMessage()));
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalState(IllegalStateException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGeneral(Exception ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Internal server error");
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
