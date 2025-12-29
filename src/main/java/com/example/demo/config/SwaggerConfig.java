@@ -1,62 +1,40 @@
-// package com.example.demo.config;
-
-// import io.swagger.v3.oas.models.*;
-// import io.swagger.v3.oas.models.info.Info;
-// import org.springframework.context.annotation.*;
-
-// @Configuration
-// public class SwaggerConfig {
-
-//     @Bean
-//     public OpenAPI api() {
-//         return new OpenAPI()
-//                 .info(new Info()
-//                         .title("Remote Work Productivity Metrics Collector")
-//                         .version("1.0"));
-//     }
-// }
-
 package com.example.demo.config;
 
-import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
 @Configuration
-public class SwaggerConfig{
+public class SwaggerConfig {
 
     @Bean
     public OpenAPI customOpenAPI() {
 
-        // 🔐 JWT Security Scheme
-        SecurityScheme jwtScheme = new SecurityScheme()
+        SecurityScheme bearerScheme = new SecurityScheme()
                 .name("Authorization")
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
                 .bearerFormat("JWT");
 
         return new OpenAPI()
-                // 🌍 Server
+                // ✅ Server URL (keep yours)
                 .servers(List.of(
-                        new Server().url("https://9098.pro604cr.amypo.ai")
+                        new Server().url("https://9010.32procr.amypo.ai/")
                 ))
 
-                // 🔒 Apply security globally
-                .addSecurityItem(
-                        new SecurityRequirement().addList("BearerAuth")
+                // ✅ Add JWT security scheme
+                .components(new Components()
+                        .addSecuritySchemes("bearerAuth", bearerScheme)
                 )
 
-                // 🔑 Register security scheme
-                .components(
-                        new Components().addSecuritySchemes(
-                                "BearerAuth", jwtScheme
-                        )
-                );
+                // ✅ Apply security globally
+                .addSecurityItem(new SecurityRequirement()
+                        .addList("bearerAuth"));
     }
 }
