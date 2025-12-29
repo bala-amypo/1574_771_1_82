@@ -2,38 +2,35 @@ package com.example.demo.controller;
 
 import com.example.demo.model.AnomalyRule;
 import com.example.demo.service.AnomalyRuleService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/anomaly-rules")
+@CrossOrigin(origins = "*")
+
 public class AnomalyRuleController {
 
-    private final AnomalyRuleService service;
+    private final AnomalyRuleService ruleService;
 
-    public AnomalyRuleController(AnomalyRuleService service) {
-        this.service = service;
+    public AnomalyRuleController(AnomalyRuleService ruleService) {
+        this.ruleService = ruleService;
     }
 
     @PostMapping
-    public AnomalyRule create(@RequestBody AnomalyRule rule) {
-        return service.createRule(rule);
-    }
-
-    @PutMapping("/{id}")
-    public AnomalyRule update(@PathVariable Long id,
-                              @RequestBody AnomalyRule rule) {
-        return service.updateRule(id, rule);
+    public ResponseEntity<AnomalyRule> createRule(@RequestBody AnomalyRule rule) {
+        return ResponseEntity.ok(ruleService.createRule(rule));
     }
 
     @GetMapping("/active")
-    public List<AnomalyRule> getActive() {
-        return service.getActiveRules();
+    public ResponseEntity<List<AnomalyRule>> getActiveRules() {
+        return ResponseEntity.ok(ruleService.getActiveRules());
     }
 
     @GetMapping
-    public List<AnomalyRule> getAll() {
-        return service.getAllRules();
+    public ResponseEntity<List<AnomalyRule>> getAllRules() {
+        return ResponseEntity.ok(ruleService.getAllRules());
     }
 }
