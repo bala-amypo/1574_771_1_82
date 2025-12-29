@@ -1,43 +1,46 @@
+package com.example.demo.controller;
+
+import com.example.demo.dto.CredentialStatusDto;
+import com.example.demo.model.Credential;
+import com.example.demo.service.CredentialVerificationService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/credentials")
 public class CredentialVerificationController {
 
-    private final CredentialVerificationService service;
+    private final CredentialVerificationService credentialService;
 
-    public CredentialVerificationController(CredentialVerificationService service) {
-        this.service = service;
+    public CredentialVerificationController(
+            CredentialVerificationService credentialService) {
+        this.credentialService = credentialService;
     }
 
     @PostMapping
-    public ResponseEntity<Credential> register(
-            @RequestBody CredentialRequestDto dto) {
-
-        Credential credential = new Credential();
-        EmployeeProfile emp = new EmployeeProfile();
-        emp.setId(dto.getEmployeeId());
-
-        credential.setEmployee(emp);
-        credential.setCredentialId(dto.getCredentialId());
-        credential.setIssuer(dto.getIssuer());
-        credential.setIssuedAt(dto.getIssuedAt());
-        credential.setExpiresAt(dto.getExpiresAt());
-        credential.setMetadataJson(dto.getMetadataJson());
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.registerCredential(credential));
+    public ResponseEntity<Credential> register(@RequestBody Credential credential) {
+        return ResponseEntity.ok(
+                credentialService.registerCredential(credential)
+        );
     }
 
     @PostMapping("/{credentialId}/verify")
     public ResponseEntity<CredentialStatusDto> verify(
             @PathVariable String credentialId) {
 
-        return ResponseEntity.ok(service.verifyCredential(credentialId));
+        return ResponseEntity.ok(
+                credentialService.verifyCredential(credentialId)
+        );
     }
 
     @GetMapping("/employee/{employeeId}")
     public ResponseEntity<List<Credential>> byEmployee(
             @PathVariable Long employeeId) {
 
-        return ResponseEntity.ok(service.getCredentialsForEmployee(employeeId));
+        return ResponseEntity.ok(
+                credentialService.getCredentialsForEmployee(employeeId)
+        );
     }
 }

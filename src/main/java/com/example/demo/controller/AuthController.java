@@ -1,43 +1,58 @@
+package com.example.demo.controller;
+
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
+import com.example.demo.model.UserAccount;
+import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.service.UserAccountService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
+
 @RestController
-@RequestMapping("/api/credentials")
-public class CredentialVerificationController {
+@RequestMapping("/auth")
+public class AuthController {
 
-    private final CredentialVerificationService service;
+    private final UserAccountService userAccountService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public CredentialVerificationController(CredentialVerificationService service) {
-        this.service = service;
+    public AuthController(UserAccountService userAccountService,
+                          PasswordEncoder passwordEncoder,
+                          JwtTokenProvider jwtTokenProvider) {
+        this.userAccountService = userAccountService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    @PostMapping
-    public ResponseEntity<Credential> register(
-            @RequestBody CredentialRequestDto dto) {
-
-        Credential credential = new Credential();
-        EmployeeProfile emp = new EmployeeProfile();
-        emp.setId(dto.getEmployeeId());
-
-        credential.setEmployee(emp);
-        credential.setCredentialId(dto.getCredentialId());
-        credential.setIssuer(dto.getIssuer());
-        credential.setIssuedAt(dto.getIssuedAt());
-        credential.setExpiresAt(dto.getExpiresAt());
-        credential.setMetadataJson(dto.getMetadataJson());
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(service.registerCredential(credential));
+    @PostMapping("/register")
+    public ResponseEntity<UserAccount> register(@RequestBody UserAccount user) {
+        user.setPasswordHash(passwordEncoder.encode(user.getPasswordHash()));
+        return new ResponseEntity<>(
+                userAccountService.registerUser(user),
+                HttpStatus.CREATED
+        );
     }
 
-    @PostMapping("/{credentialId}/verify")
-    public ResponseEntity<CredentialStatusDto> verify(
-            @PathVariable String credentialId) {
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
 
-        return ResponseEntity.ok(service.verifyCredential(credentialId));
-    }
+        UserAccount user = userAccountService.findByEmail(request.getEmail());
 
-    @GetMapping("/employee/{employeeId}")
-    public ResponseEntity<List<Credential>> byEmployee(
-            @PathVariable Long employeeId) {
+        if (user == null ||
+                !passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
 
-        return ResponseEntity.ok(service.getCredentialsForEmployee(employeeId));
+        String token = jwtTokenProvider.generateToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRoles().iterator().next()
+        );
+
+        return ResponseEntity.ok(
+                new AuthResponse(token, user.getId(), user.getEmail(), user.getRoles())
+        );
     }
 }

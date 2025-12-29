@@ -1,67 +1,61 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
-import com.example.demo.model.UserAccount;
-import com.example.demo.security.JwtTokenProvider;
-import com.example.demo.service.UserAccountService;
-import org.springframework.http.HttpStatus;
+import com.example.demo.model.EmployeeProfile;
+import com.example.demo.service.EmployeeProfileService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 @RestController
-@RequestMapping("/auth")
-public class AuthController {
+@RequestMapping("/api/employees")
+public class EmployeeProfileController {
 
-    private final UserAccountService userAccountService;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final EmployeeProfileService employeeProfileService;
 
-    public AuthController(UserAccountService userAccountService,
-                          PasswordEncoder passwordEncoder,
-                          JwtTokenProvider jwtTokenProvider) {
-        this.userAccountService = userAccountService;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
+    public EmployeeProfileController(EmployeeProfileService employeeProfileService) {
+        this.employeeProfileService = employeeProfileService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<UserAccount> register(@RequestBody Map<String, String> payload) {
-
-        UserAccount user = new UserAccount();
-        user.setUsername(payload.get("username"));
-        user.setEmail(payload.get("email"));
-        user.setPasswordHash(passwordEncoder.encode(payload.get("password")));
-        user.setRoles(Collections.singleton("ROLE_USER"));
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(userAccountService.registerUser(user));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-
-        UserAccount user = userAccountService.findByEmail(request.getEmail());
-
-        if (user == null || !passwordEncoder.matches(
-                request.getPassword(), user.getPasswordHash())) {
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("message", "Invalid email or password"));
-        }
-
-        String token = jwtTokenProvider.generateToken(
-                user.getId(),
-                user.getEmail(),
-                user.getRoles().iterator().next()
-        );
+    @PostMapping
+    public ResponseEntity<EmployeeProfile> create(
+            @RequestBody EmployeeProfile employee) {
 
         return ResponseEntity.ok(
-                new AuthResponse(token, user.getId(), user.getEmail(), user.getRoles())
+                employeeProfileService.createEmployee(employee)
         );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeProfile> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                employeeProfileService.getEmployeeById(id)
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<EmployeeProfile>> getAll() {
+        return ResponseEntity.ok(
+                employeeProfileService.getAllEmployees()
+        );
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<EmployeeProfile> updateStatus(
+            @PathVariable Long id,
+            @RequestParam boolean active) {
+
+        return ResponseEntity.ok(
+                employeeProfileService.updateEmployeeStatus(id, active)
+        );
+    }
+
+    @GetMapping("/lookup/{employeeId}")
+    public ResponseEntity<EmployeeProfile> lookup(
+            @PathVariable String employeeId) {
+
+        return employeeProfileService.findByEmployeeId(employeeId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
