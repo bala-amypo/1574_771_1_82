@@ -1,73 +1,75 @@
-// package com.example.demo.controller;
-
-// import io.jsonwebtoken.Jwts;
-// import io.jsonwebtoken.SignatureAlgorithm;
-// import io.jsonwebtoken.security.Keys;
-// import org.springframework.web.bind.annotation.*;
-
-// import java.nio.charset.StandardCharsets;
-// import java.security.Key;
-// import java.util.Date;
-// import java.util.Map;
-
-// @RestController
-// @RequestMapping("/auth")
-// public class AuthController {
-
-//     private static final String SECRET =
-//             "mysecretkeymysecretkeymysecretkey123";
-
-//     private final Key key =
-//             Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
-
-//     @PostMapping("/login")
-//     public Map<String, String> login(
-//             @RequestParam String username,
-//             @RequestParam String password
-//     ) {
-
-//         // SIMPLE AUTH CHECK
-//         if (!username.equals("admin") || !password.equals("password")) {
-//             throw new RuntimeException("Invalid credentials");
-//         }
-
-//         String token = Jwts.builder()
-//                 .setSubject(username)
-//                 .setIssuedAt(new Date())
-//                 .setExpiration(new Date(System.currentTimeMillis() + 60 * 60 * 1000))
-//                 .signWith(key, SignatureAlgorithm.HS256)
-//                 .compact();
-
-//         return Map.of("token", token);
-//     }
-// }
-
 package com.example.demo.controller;
 
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.model.UserAccount;
+import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserAccountService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final UserAccountService service;
+    private final UserAccountService userAccountService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(UserAccountService service) {
-        this.service = service;
+    public AuthController(UserAccountService userAccountService,
+                          PasswordEncoder passwordEncoder,
+                          JwtTokenProvider jwtTokenProvider) {
+        this.userAccountService = userAccountService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/register")
-    public UserAccount register(@RequestBody UserAccount user) {
-        return service.register(user);
+    public ResponseEntity<UserAccount> register(
+            @RequestBody Map<String, String> payload) {
+
+        UserAccount user = new UserAccount();
+        user.setUsername(payload.get("username"));
+        user.setEmail(payload.get("email"));
+        user.setPasswordHash(
+                passwordEncoder.encode(payload.get("password"))
+        );
+        user.setRoles(Collections.singleton("ROLE_USER"));
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userAccountService.registerUser(user));
     }
 
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody UserAccount user) {
-        String token = service.login(user);
-        return Map.of("token", token);
+    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
+
+        UserAccount user = userAccountService.findByEmail(request.getEmail());
+
+        if (user == null || !passwordEncoder.matches(
+                request.getPassword(), user.getPasswordHash())) {
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("message", "Invalid email or password"));
+        }
+
+        String token = jwtTokenProvider.generateToken(
+                user.getId(),
+                user.getEmail(),
+                user.getRoles().iterator().next()
+        );
+
+        return ResponseEntity.ok(
+                new AuthResponse(
+                        token,
+                        user.getId(),
+                        user.getEmail(),
+                        user.getRoles()
+                )
+        );
     }
 }

@@ -1,37 +1,35 @@
-package com.example.demo.controller;
-
-import com.example.demo.model.AnomalyFlagRecord;
-import com.example.demo.service.AnomalyFlagService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/anomalies")
-@CrossOrigin(origins = "*")
-
 public class AnomalyFlagController {
 
-    private final AnomalyFlagService flagService;
+    private final AnomalyFlagService service;
 
-    public AnomalyFlagController(AnomalyFlagService flagService) {
-        this.flagService = flagService;
+    public AnomalyFlagController(AnomalyFlagService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<AnomalyFlagRecord> flagMetric(
-            @RequestBody AnomalyFlagRecord flag) {
-        return ResponseEntity.ok(flagService.flagMetric(flag));
+    public ResponseEntity<AnomalyFlagRecord> create(@RequestBody AnomalyFlagRecord record) {
+        return new ResponseEntity<>(service.flagAnomaly(record), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/resolve")
     public ResponseEntity<AnomalyFlagRecord> resolve(@PathVariable Long id) {
-        return ResponseEntity.ok(flagService.resolveFlag(id));
+        return ResponseEntity.ok(service.resolveFlag(id));
+    }
+
+    @GetMapping("/employee/{employeeId}")
+    public ResponseEntity<List<AnomalyFlagRecord>> byEmployee(@PathVariable Long employeeId) {
+        return ResponseEntity.ok(service.getFlagsByEmployee(employeeId));
+    }
+
+    @GetMapping("/metric/{metricId}")
+    public ResponseEntity<List<AnomalyFlagRecord>> byMetric(@PathVariable Long metricId) {
+        return ResponseEntity.ok(service.getFlagsByMetric(metricId));
     }
 
     @GetMapping
     public ResponseEntity<List<AnomalyFlagRecord>> getAll() {
-        return ResponseEntity.ok(flagService.getAllFlags());
+        return ResponseEntity.ok(service.getAllFlags());
     }
 }
